@@ -1,5 +1,5 @@
-OpenFAST .Net - port of OpenFAST Java project
-=============================================
+OpenFAST .NET - port of Java project
+====================================
 
 About FAST protocol
 -------------------
