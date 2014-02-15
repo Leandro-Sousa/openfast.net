@@ -11,4 +11,4 @@ https://sourceforge.net/projects/openfast
 
 License
 -------
-To be defined...
+Mozilla Public License 1.1 (MPL 1.1) as in original Java project
