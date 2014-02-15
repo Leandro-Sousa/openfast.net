@@ -11,8 +11,7 @@ https://sourceforge.net/projects/openfast
 
 Roadmap
 -------
-Feb 14 - Aug 14
-Get this old port up to the latest version of original project.
+Feb 14 - Aug 14: Get this old port up to the latest version of original project.
 
 License
 -------
