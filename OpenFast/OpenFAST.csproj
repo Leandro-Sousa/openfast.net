@@ -218,7 +218,6 @@
     <Compile Include="Template\Loader\XMLMessageTemplateLoader.cs" />
     <Compile Include="Template\LongValue.cs" />
     <Compile Include="Template\MessageTemplate.cs" />
-    <Compile Include="Template\NewCode.cs" />
     <Compile Include="Template\NullTemplateRegistry.cs" />
     <Compile Include="Template\Operators\AlwaysPresentOperatorCodec.cs" />
     <Compile Include="Template\Operators\ConstantOperatorCodec.cs" />
