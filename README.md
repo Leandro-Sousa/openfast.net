@@ -16,3 +16,5 @@ Feb 14 - Aug 14: Get this old port up to the latest version of original project.
 License
 -------
 Mozilla Public License 1.1 (MPL 1.1) as in original project
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/devfrenzy/openfast.net/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
