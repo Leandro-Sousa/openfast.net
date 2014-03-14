@@ -37,34 +37,34 @@ namespace OpenFAST.Template
             get { return Util.ToArray(_regTemplateMap.Keys); }
         }
 
-        public override void Add(int templateId, MessageTemplate template)
+        public override void Register(int id, MessageTemplate template)
         {
             Define(template);
-            _regIdMap[templateId] = template;
-            _regTemplateMap[template] = templateId;
-            NotifyTemplateRegistered(template, templateId);
+            _regIdMap[id] = template;
+            _regTemplateMap[template] = id;
+            NotifyTemplateRegistered(template, id);
         }
 
-        public override void Add(int templateId, QName templateName)
+        public override void Register(int id, QName templateName)
         {
             MessageTemplate template;
             if (!_defNameMap.TryGetValue(templateName, out template))
                 throw new ArgumentOutOfRangeException("templateName", templateName, "The template is not defined.");
 
-            _regTemplateMap[template] = templateId;
-            _regIdMap[templateId] = template;
-            NotifyTemplateRegistered(template, templateId);
+            _regTemplateMap[template] = id;
+            _regIdMap[id] = template;
+            NotifyTemplateRegistered(template, id);
         }
 
-        public override bool TryAdd(int templateId, QName templateName)
+        public override bool TryRegister(int id, QName templateName)
         {
             MessageTemplate template;
             if (!_defNameMap.TryGetValue(templateName, out template))
                 return false;
 
-            _regTemplateMap[template] = templateId;
-            _regIdMap[templateId] = template;
-            NotifyTemplateRegistered(template, templateId);
+            _regTemplateMap[template] = id;
+            _regIdMap[id] = template;
+            NotifyTemplateRegistered(template, id);
             return true;
         }
 
@@ -84,19 +84,16 @@ namespace OpenFAST.Template
             return id;
         }
 
-        public override MessageTemplate this[int templateId]
+        public override MessageTemplate GetTemplate(int templateId)
         {
-            get
-            {
-                MessageTemplate value;
-                _regIdMap.TryGetValue(templateId, out value);
-                return value;
-            }
+            MessageTemplate value = null;
+            _regIdMap.TryGetValue(templateId, out value);
+            return value;
         }
 
-        public override MessageTemplate this[QName templateName]
+        public override MessageTemplate GetTemplate(QName templateName)
         {
-            get { return _defNameMap[templateName]; }
+            return _defNameMap[templateName];
         }
 
         public override int GetId(MessageTemplate template)
@@ -137,20 +134,20 @@ namespace OpenFAST.Template
             return _defNameMap.TryGetValue(templateName, out template);
         }
 
-        public override bool TryGetId(QName templateName, out int templateId)
+        public override bool TryGetId(QName templateName, out int id)
         {
             MessageTemplate tmpl;
-            if (_defNameMap.TryGetValue(templateName, out tmpl) && _regTemplateMap.TryGetValue(tmpl, out templateId))
+            if (_defNameMap.TryGetValue(templateName, out tmpl) && _regTemplateMap.TryGetValue(tmpl, out id))
                 return true;
-            templateId = -1;
+            id = -1;
             return false;
         }
 
-        public override bool TryGetId(MessageTemplate template, out int templateId)
+        public override bool TryGetId(MessageTemplate template, out int id)
         {
-            if (_regTemplateMap.TryGetValue(template, out templateId))
+            if (_regTemplateMap.TryGetValue(template, out id))
                 return true;
-            templateId = -1;
+            id = -1;
             return false;
         }
 
@@ -175,10 +172,10 @@ namespace OpenFAST.Template
             _regIdMap.Remove(id);
         }
 
-        public override void Remove(int templateId)
+        public override void Remove(int id)
         {
-            MessageTemplate template = _regIdMap[templateId];
-            _regIdMap.Remove(templateId);
+            MessageTemplate template = _regIdMap[id];
+            _regIdMap.Remove(id);
             _regTemplateMap.Remove(template);
             _defNameMap.Remove(template.QName);
         }
@@ -191,17 +188,12 @@ namespace OpenFAST.Template
             MessageTemplate[] templatesp = registry.Templates;
             if (templatesp != null)
                 foreach (MessageTemplate t in templatesp)
-                    Add(registry.GetId(t), t);
+                    Register(registry.GetId(t), t);
         }
 
         public override ICollection<QName> Names()
         {
             return _defNameMap.Keys;
-        }
-
-        public override IEnumerator<KeyValuePair<int, MessageTemplate>> GetEnumerator()
-        {
-            return _regIdMap.GetEnumerator();
         }
     }
 }

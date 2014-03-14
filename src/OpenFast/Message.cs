@@ -52,9 +52,9 @@ namespace OpenFAST
             return fields;
         }
 
-        public override IFieldValue Clone()
+        public override IFieldValue Copy()
         {
-            var copy = (GroupValue) base.Clone();
+            var copy = (GroupValue) base.Copy();
             return new Message(_template, copy.Values);
         }
 

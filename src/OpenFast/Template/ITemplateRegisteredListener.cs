@@ -19,14 +19,10 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-namespace OpenFAST.Sessions
+namespace OpenFAST.Template
 {
-    public static class SessionConstants
+    public interface ITemplateRegisteredListener
     {
-        //public const string VendorId = "http://OpenFAST.org/OpenFAST/1.1";
-        public const string VendorId = "VBOND";
-
-        public static readonly ISessionProtocol Scp10 = new SessionControlProtocol10();
-        public static readonly ISessionProtocol Scp11 = new SessionControlProtocol11();
+        void TemplateRegistered(MessageTemplate template, int templateId);
     }
 }

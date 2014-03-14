@@ -23,6 +23,6 @@ namespace OpenFAST
 {
     public interface IFieldValue
     {
-        IFieldValue Clone();
+        IFieldValue Copy();
     }
 }

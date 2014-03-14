@@ -23,14 +23,14 @@ using System;
 using System.IO;
 using System.Text;
 using OpenFAST.Template.Types;
-using OpenFAST.Utility;
 
 namespace OpenFAST.Template
 {
     public sealed class ComposedScalar : Field
     {
-        private readonly FastType _fastType;
+        private const Type ScalarValueType = null;
         private readonly Scalar[] _fields;
+        private readonly FastType _fastType;
         private readonly IComposedValueConverter _valueConverter;
 
         public ComposedScalar(string name, FastType fastType, Scalar[] fields, bool optional,
@@ -47,23 +47,6 @@ namespace OpenFAST.Template
             _fastType = fastType;
         }
 
-        #region Cloning
-
-        public ComposedScalar(ComposedScalar other)
-            : base(other)
-        {
-            _fastType = other._fastType;
-            _fields = other._fields.CloneArray();
-            _valueConverter = other._valueConverter;
-        }
-
-        public override Field Clone()
-        {
-            return new ComposedScalar(this);
-        }
-
-        #endregion
-
         public override string TypeName
         {
             get { return _fastType.Name; }
@@ -71,10 +54,10 @@ namespace OpenFAST.Template
 
         public override Type ValueType
         {
-            get { return null; }
+            get { return ScalarValueType; }
         }
 
-        public FastType FastType
+        public FastType FASTType
         {
             get { return _fastType; }
         }
@@ -82,17 +65,6 @@ namespace OpenFAST.Template
         public Scalar[] Fields
         {
             get { return _fields; }
-        }
-
-        public override bool UsesPresenceMapBit
-        {
-            get
-            {
-                for (int i = 0; i < _fields.Length; i++)
-                    if (_fields[i].UsesPresenceMapBit)
-                        return true;
-                return false;
-            }
         }
 
         public override IFieldValue CreateValue(string value)
@@ -143,6 +115,17 @@ namespace OpenFAST.Template
             return false;
         }
 
+        public override bool UsesPresenceMapBit
+        {
+            get
+            {
+                for (int i = 0; i < _fields.Length; i++)
+                    if (_fields[i].UsesPresenceMapBit)
+                        return true;
+                return false;
+            }
+        }
+
         public override bool Equals(Object obj)
         {
             if (obj == this)
@@ -159,7 +142,7 @@ namespace OpenFAST.Template
                 Scalar fld1 = _fields[i];
                 Scalar fld2 = other._fields[i];
 
-                if (!fld2.FastType.Equals(fld1.FastType))
+                if (!fld2.FASTType.Equals(fld1.FASTType))
                     return false;
                 if (!fld2.TypeCodec.Equals(fld1.TypeCodec))
                     return false;

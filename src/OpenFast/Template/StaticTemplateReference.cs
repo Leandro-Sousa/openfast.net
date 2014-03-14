@@ -28,26 +28,10 @@ namespace OpenFAST.Template
     {
         private readonly MessageTemplate _template;
 
-        public StaticTemplateReference(MessageTemplate template)
-            : base(template.QName, false)
+        public StaticTemplateReference(MessageTemplate template) : base(template.QName, false)
         {
             _template = template;
         }
-
-        #region Cloning
-
-        public StaticTemplateReference(StaticTemplateReference other)
-            : base(other)
-        {
-            _template = (MessageTemplate) other._template.Clone();
-        }
-
-        public override Field Clone()
-        {
-            return new StaticTemplateReference(this);
-        }
-
-        #endregion
 
         public override string TypeName
         {
@@ -62,11 +46,6 @@ namespace OpenFAST.Template
         public virtual MessageTemplate Template
         {
             get { return _template; }
-        }
-
-        public override bool UsesPresenceMapBit
-        {
-            get { return false; }
         }
 
         public override IFieldValue CreateValue(string value)
@@ -89,6 +68,11 @@ namespace OpenFAST.Template
         public override bool IsPresenceMapBitSet(byte[] encoding, IFieldValue fieldValue)
         {
             return false;
+        }
+
+        public override bool UsesPresenceMapBit
+        {
+            get { return false; }
         }
 
         public override bool Equals(Object obj)

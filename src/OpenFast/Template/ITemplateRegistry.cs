@@ -26,34 +26,40 @@ namespace OpenFAST.Template
 {
     public static class TemplateRegistryFields
     {
-        public static readonly ITemplateRegistry Null = new NullTemplateRegistry();
-    }
-    public delegate void TemplateNotificationDelegate(ITemplateRegistry registry, MessageTemplate template, int templateId);
+        public static readonly ITemplateRegistry Null;
 
-    public interface ITemplateRegistry : IEnumerable<KeyValuePair<int, MessageTemplate>>
+        static TemplateRegistryFields()
+        {
+            Null = new NullTemplateRegistry();
+        }
+    }
+
+    public interface ITemplateRegistry
     {
         MessageTemplate[] Templates { get; }
 
-        MessageTemplate this[int id] { get; }
-        MessageTemplate this[string name] { get; }
-        MessageTemplate this[QName templateName] { get; }
+        MessageTemplate GetTemplate(int id);
+        MessageTemplate GetTemplate(string name);
+        MessageTemplate GetTemplate(QName templateName);
 
         void RegisterAll(ITemplateRegistry registry);
 
-        void Add(int templateId, MessageTemplate template);
-        [Obsolete]
-        void Add(int templateId, string name);
-        [Obsolete]
-        void Add(int templateId, QName templateName);
+        void Register(int id, MessageTemplate template);
 
-        bool TryAdd(int templateId, QName templateName);
+        [Obsolete]
+        void Register(int id, string name);
+
+        [Obsolete]
+        void Register(int id, QName templateName);
+
+        bool TryRegister(int id, QName templateName);
 
         void Define(MessageTemplate template);
 
         void Remove(string name);
         void Remove(QName templateName);
         void Remove(MessageTemplate template);
-        void Remove(int templateId);
+        void Remove(int id);
 
         [Obsolete]
         int GetId(string name);
@@ -84,11 +90,12 @@ namespace OpenFAST.Template
         bool TryGetTemplate(string name, out MessageTemplate template);
         bool TryGetTemplate(QName templateName, out MessageTemplate template);
 
-        bool TryGetId(string name, out int templateId);
-        bool TryGetId(QName templateName, out int templateId);
-        bool TryGetId(MessageTemplate template, out int templateId);
+        bool TryGetId(string name, out int id);
+        bool TryGetId(QName templateName, out int id);
+        bool TryGetId(MessageTemplate template, out int id);
 
-        event TemplateNotificationDelegate OnTemplateRegistered;
+        void AddTemplateRegisteredListener(ITemplateRegisteredListener templateRegisteredListener);
+        void RemoveTemplateRegisteredListener(ITemplateRegisteredListener templateRegisteredListener);
 
         ICollection<QName> Names();
     }

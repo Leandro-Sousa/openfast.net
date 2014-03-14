@@ -58,23 +58,6 @@ namespace OpenFAST.Template
                 _length = length;
         }
 
-        #region Cloning
-
-        public Sequence(Sequence other)
-            : base(other)
-        {
-            _group = (Group) other._group.Clone();
-            _implicitLength = other._implicitLength;
-            _length = (Scalar) other._length.Clone();
-        }
-
-        public override Field Clone()
-        {
-            return new Sequence(this);
-        }
-
-        #endregion
-
         public virtual Scalar Length
         {
             get { return _length; }
@@ -103,21 +86,12 @@ namespace OpenFAST.Template
         public virtual QName TypeReference
         {
             get { return _group.TypeReference; }
-            set
-            {
-                ThrowOnReadonly();
-                _group.TypeReference = value;
-            }
+            set { _group.TypeReference = value; }
         }
 
         public bool HasTypeReference
         {
             get { return _group.HasTypeReference; }
-        }
-
-        public override bool UsesPresenceMapBit
-        {
-            get { return _length.UsesPresenceMapBit; }
         }
 
         #region IFieldSet Members
@@ -138,6 +112,11 @@ namespace OpenFAST.Template
         {
             return new Scalar(Global.CreateImplicitName(name), FastType.U32, Operator.None, ScalarValue.Undefined,
                               optional);
+        }
+
+        public override bool UsesPresenceMapBit
+        {
+            get { return _length.UsesPresenceMapBit; }
         }
 
         public override bool IsPresenceMapBitSet(byte[] encoding, IFieldValue fieldValue)

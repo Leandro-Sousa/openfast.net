@@ -34,21 +34,16 @@ namespace OpenFAST
         private readonly GlobalDictionary _globalDictionary = new GlobalDictionary();
         private readonly TemplateDictionary _templateDictionary = new TemplateDictionary();
         private readonly ApplicationTypeDictionary _applicationTypeDictionary = new ApplicationTypeDictionary();
-        private readonly ITemplateRegistry _templateRegistry;
 
         private QName _currentApplicationType;
         private IErrorHandler _errorHandler = ErrorHandlerFields.Default;
+        private ITemplateRegistry _templateRegistry = new BasicTemplateRegistry();
 
-        public Context() : this(null)
-        {
-        }
-
-        public Context(ITemplateRegistry templateRegistry)
+        public Context()
         {
             _dictionaries[DictionaryFields.Global] = _globalDictionary;
             _dictionaries[DictionaryFields.Template] = _templateDictionary;
             _dictionaries[DictionaryFields.Type] = _applicationTypeDictionary;
-            _templateRegistry = templateRegistry ?? new BasicTemplateRegistry();
         }
 
         public int LastTemplateId { get; set; }
@@ -66,6 +61,7 @@ namespace OpenFAST
         public ITemplateRegistry TemplateRegistry
         {
             get { return _templateRegistry; }
+            set { _templateRegistry = value; }
         }
 
         public bool TraceEnabled { get; set; }
@@ -94,7 +90,7 @@ namespace OpenFAST
 
         public void RegisterTemplate(int templateId, MessageTemplate template)
         {
-            _templateRegistry.Add(templateId, template);
+            _templateRegistry.Register(templateId, template);
         }
 
         public ScalarValue Lookup(string dictionary, Group group, QName key)

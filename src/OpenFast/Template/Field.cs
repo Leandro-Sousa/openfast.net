@@ -32,18 +32,18 @@ namespace OpenFAST.Template
         private Dictionary<QName, string> _attributes;
         private string _id;
         private QName _key;
-        private MessageTemplate _messageTemplate;
-        private Context _context;
 
         protected Field(QName name, bool isOptional)
             : this(name, name, isOptional, null)
         {
         }
 
+
         protected Field(QName name, QName key, bool isOptional)
             : this(name, key, isOptional, null)
         {
         }
+
 
         protected Field(string name, string key, bool isOptional, string id)
             : this(new QName(name), new QName(key), isOptional, id)
@@ -57,18 +57,6 @@ namespace OpenFAST.Template
             _isOptional = isOptional;
             _id = id;
         }
-
-        #region Cloning
-
-        protected Field(Field other)
-            : this(other._name, other._key, other._isOptional, other._id)
-        {
-            // _messageTemplate & _context are now null
-            if (other._attributes != null)
-                _attributes = new Dictionary<QName, string>(other._attributes);
-        }
-
-        #endregion
 
         public string Name
         {
@@ -88,46 +76,24 @@ namespace OpenFAST.Template
         public QName Key
         {
             get { return _key; }
-            set
-            {
-                ThrowOnReadonly();
-                _key = value;
-            }
+            set { _key = value; }
         }
 
         public string Id
         {
             get { return _id ?? ""; }
-            set
-            {
-                ThrowOnReadonly();
-                _id = value;
-            }
+            set { _id = value; }
         }
 
         public abstract Type ValueType { get; }
         public abstract string TypeName { get; }
-
-        public MessageTemplate MessageTemplate
-        {
-            get { return _messageTemplate; }
-        }
-
-        public Context Context
-        {
-            get { return _context; }
-        }
-
-        public abstract bool UsesPresenceMapBit { get; }
 
         #region Equals
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj)) return true;
-
-#warning _attributes is a dictionary that does not support equality - used both here & in GetHashCode()
-
+            
             var other = obj as Field;
             if (ReferenceEquals(null, other)) return false;
             return Equals(other._name, _name) && other._isOptional.Equals(_isOptional) &&
@@ -148,30 +114,6 @@ namespace OpenFAST.Template
         }
 
         #endregion
-
-        public abstract Field Clone();
-
-        internal void AttachToTemplate(MessageTemplate value)
-        {
-            if (_messageTemplate != null) // && !ReferenceEquals(_messageTemplate, value))
-                throw new InvalidOperationException("This field is already a part of the template " + _messageTemplate.Name);
-            _messageTemplate = value;
-        }
-
-        internal void AttachToContext(Context value)
-        {
-            if (_context != null) // && !ReferenceEquals(_context, value))
-                throw new InvalidOperationException("This field is already a part of a context");
-            if (_messageTemplate == null)
-                throw new InvalidOperationException("This field is not part of any template");
-            _context = value;
-        }
-
-        protected void ThrowOnReadonly()
-        {
-            if (_context != null)
-                throw new InvalidOperationException("This object cannot be edited because it is part of a context");
-        }
 
         public bool IsIdNull()
         {
@@ -194,11 +136,12 @@ namespace OpenFAST.Template
 
         public void AddAttribute(QName qname, string value)
         {
-            ThrowOnReadonly();
             if (_attributes == null)
                 _attributes = new Dictionary<QName, string>();
             _attributes[qname] = value;
         }
+
+        public MessageTemplate MessageTemplate { get; set; }
 
         protected bool IsPresent(BitVectorReader presenceMapReader)
         {
@@ -210,6 +153,8 @@ namespace OpenFAST.Template
 
         public abstract IFieldValue Decode(Stream inStream, Group decodeTemplate, Context context,
                                            BitVectorReader presenceMapReader);
+
+        public abstract bool UsesPresenceMapBit { get; }
 
         public abstract bool IsPresenceMapBitSet(byte[] encoding, IFieldValue fieldValue);
 

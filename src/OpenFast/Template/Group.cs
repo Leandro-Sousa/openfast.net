@@ -32,54 +32,51 @@ namespace OpenFAST.Template
     public class Group : Field
     {
         private readonly Field[] _fieldDefinitions;
+        private readonly Dictionary<string, Field> _fieldIdMap;
         private readonly Dictionary<Field, int> _fieldIndexMap;
         private readonly Dictionary<QName, Field> _fieldNameMap;
         private readonly Field[] _fields;
         private readonly Dictionary<string, Scalar> _introspectiveFieldMap;
         private readonly StaticTemplateReference[] _staticTemplateReferences;
         private readonly bool _usesPresenceMapRenamedField;
-        private string _childNamespace;
-        private QName _typeReference;
 
         public Group(string name, Field[] fields, bool optional)
-            : this(new QName(name), "", fields, optional)
+            : this(new QName(name), fields, optional)
         {
         }
 
         public Group(QName name, Field[] fields, bool optional)
-            : this(name, "", fields, optional)
-        {
-        }
-
-        public Group(QName name, string childNamespace, Field[] fields, bool optional)
             : base(name, optional)
         {
-            _childNamespace = childNamespace;
+            ChildNamespace = "";
+            if (fields == null) throw new ArgumentNullException("fields");
 
-            Init(fields,
-                 out _fieldDefinitions, out _fields, out _fieldIndexMap, out _fieldNameMap,
-                 out _introspectiveFieldMap, out _usesPresenceMapRenamedField, out _staticTemplateReferences);
+            var expandedFields = new List<Field>();
+            var references = new List<StaticTemplateReference>();
+
+            foreach (Field t in fields)
+            {
+                if (t is StaticTemplateReference)
+                {
+                    var currentTemplate = (StaticTemplateReference) t;
+                    Field[] referenceFields = currentTemplate.Template.Fields;
+                    for (int j = 1; j < referenceFields.Length; j++)
+                        expandedFields.Add(referenceFields[j]);
+                    references.Add(currentTemplate);
+                }
+                else
+                    expandedFields.Add(t);
+            }
+
+            _fields = expandedFields.ToArray();
+            _fieldDefinitions = fields;
+            _fieldIndexMap = ConstructFieldIndexMap(_fields);
+            _fieldNameMap = Util.ToSafeDictionary(_fields, f => f.QName);
+            _fieldIdMap = Util.ToSafeDictionary(_fields, f => f.Id);
+            _introspectiveFieldMap = ConstructInstrospectiveFields(_fields);
+            _usesPresenceMapRenamedField = _fields.Any(t => t.UsesPresenceMapBit);
+            _staticTemplateReferences = references.ToArray();
         }
-
-        #region Cloning
-
-        public Group(Group other)
-            : base(other)
-        {
-            _childNamespace = other._childNamespace;
-            _typeReference = other._typeReference;
-
-            Init(other._fieldDefinitions.CloneArray(),
-                 out _fieldDefinitions, out _fields, out _fieldIndexMap, out _fieldNameMap,
-                 out _introspectiveFieldMap, out _usesPresenceMapRenamedField, out _staticTemplateReferences);
-        }
-
-        public override Field Clone()
-        {
-            return new Group(this);
-        }
-
-        #endregion
 
         private int MaxPresenceMapSize
         {
@@ -106,25 +103,9 @@ namespace OpenFAST.Template
             get { return _fields; }
         }
 
-        public QName TypeReference
-        {
-            get { return _typeReference; }
-            set
-            {
-                ThrowOnReadonly();
-                _typeReference = value;
-            }
-        }
+        public QName TypeReference { get; set; }
 
-        public string ChildNamespace
-        {
-            get { return _childNamespace; }
-            set
-            {
-                ThrowOnReadonly();
-                _childNamespace = value;
-            }
-        }
+        public string ChildNamespace { get; set; }
 
         public StaticTemplateReference[] StaticTemplateReferences
         {
@@ -139,53 +120,6 @@ namespace OpenFAST.Template
         public bool HasTypeReference
         {
             get { return TypeReference != null; }
-        }
-
-        public override bool UsesPresenceMapBit
-        {
-            get { return IsOptional; }
-        }
-
-        protected virtual bool UsesPresenceMap
-        {
-            get { return _usesPresenceMapRenamedField; }
-        }
-
-        private static void Init(Field[] inFields,
-                                 out Field[] fieldDefinitions,
-                                 out Field[] fields,
-                                 out Dictionary<Field, int> fieldIndexMap,
-                                 out Dictionary<QName, Field> fieldNameMap,
-                                 out Dictionary<string, Scalar> introspectiveFieldMap,
-                                 out bool usesPresenceMapRenamedField,
-                                 out StaticTemplateReference[] staticTemplateReferences)
-        {
-            if (inFields == null) throw new ArgumentNullException("inFields");
-
-            var expandedFields = new List<Field>();
-            var references = new List<StaticTemplateReference>();
-
-            foreach (Field t in inFields)
-            {
-                var currentTemplate = t as StaticTemplateReference;
-                if (currentTemplate != null)
-                {
-                    Field[] referenceFields = currentTemplate.Template.Fields;
-                    for (int j = 1; j < referenceFields.Length; j++)
-                        expandedFields.Add(referenceFields[j]);
-                    references.Add(currentTemplate);
-                }
-                else
-                    expandedFields.Add(t);
-            }
-
-            fieldDefinitions = inFields;
-            fields = expandedFields.ToArray();
-            fieldIndexMap = ConstructFieldIndexMap(fields);
-            fieldNameMap = Util.ToSafeDictionary(fields, f => f.QName);
-            introspectiveFieldMap = ConstructInstrospectiveFields(fields);
-            usesPresenceMapRenamedField = fields.Any(t => t.UsesPresenceMapBit);
-            staticTemplateReferences = references.ToArray();
         }
 
         // BAD ABSTRACTION
@@ -225,7 +159,9 @@ namespace OpenFAST.Template
         public byte[] Encode(IFieldValue value, Group template, Context context)
         {
             if (value == null)
+            {
                 return ByteUtil.EmptyByteArray;
+            }
 
             var groupValue = (GroupValue) value;
             if (context.TraceEnabled)
@@ -246,8 +182,7 @@ namespace OpenFAST.Template
                         Global.ErrorHandler.OnError(null, DynError.GeneralError, "Mandatory field {0} is null", field);
                         // BUG? error is ignored?
                     }
-                    byte[] encoding = field.Encode(fieldValue, field.MessageTemplate ?? template, context,
-                                                   presenceMapBuilder);
+                    byte[] encoding = field.Encode(fieldValue, template, context, presenceMapBuilder);
                     fieldEncodings[fieldIndex] = encoding;
                 }
                 var buffer = new MemoryStream();
@@ -262,7 +197,10 @@ namespace OpenFAST.Template
                 foreach (var t in fieldEncodings)
                 {
                     if (t != null)
-                        buffer.Write(t, 0, t.Length);
+                    {
+                        byte[] tmp = t;
+                        buffer.Write(tmp, 0, tmp.Length);
+                    }
                 }
                 if (context.TraceEnabled)
                     context.EncodeTrace.GroupEnd();
@@ -302,7 +240,7 @@ namespace OpenFAST.Template
 
 
         private IFieldValue[] DecodeFieldValues(Stream inStream, Group template,
-                                                Context context)
+                                                          Context context)
         {
             if (!UsesPresenceMap)
             {
@@ -320,15 +258,14 @@ namespace OpenFAST.Template
         }
 
         protected IFieldValue[] DecodeFieldValues(Stream inStream, Group template,
-                                                  BitVectorReader pmapReader, Context context)
+                                               BitVectorReader pmapReader, Context context)
         {
             var values = new IFieldValue[_fields.Length];
             int start = this is MessageTemplate ? 1 : 0;
 
             for (int fieldIndex = start; fieldIndex < _fields.Length; fieldIndex++)
             {
-                Field field = _fields[fieldIndex];
-                values[fieldIndex] = field.Decode(inStream, field.MessageTemplate ?? template, context, pmapReader);
+                values[fieldIndex] = _fields[fieldIndex].Decode(inStream, template, context, pmapReader);
             }
 
             if (pmapReader.HasMoreBitsSet)
@@ -345,6 +282,16 @@ namespace OpenFAST.Template
             return encoding.Length != 0;
         }
 
+
+        public override bool UsesPresenceMapBit
+        {
+            get { return IsOptional; }
+        }
+
+        protected virtual bool UsesPresenceMap
+        {
+            get { return _usesPresenceMapRenamedField; }
+        }
 
         public override IFieldValue CreateValue(string value)
         {
@@ -474,7 +421,7 @@ namespace OpenFAST.Template
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj)) return true;
-
+            
             var other = obj as Group;
             if (ReferenceEquals(null, other)) return false;
             return base.Equals(other) && Util.ArrayEqualsSlow(other._fields, _fields, 0);

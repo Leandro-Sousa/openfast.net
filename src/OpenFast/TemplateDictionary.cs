@@ -29,8 +29,8 @@ namespace OpenFAST
 {
     public sealed class TemplateDictionary : IDictionary
     {
-		private readonly Dictionary<OpenFAST.Utility.Tuple<Group, QName>, ScalarValue> _dictionary =
-			new Dictionary<OpenFAST.Utility.Tuple<Group, QName>, ScalarValue>();
+        private readonly Dictionary<Tuple<Group, QName>, ScalarValue> _dictionary =
+            new Dictionary<Tuple<Group, QName>, ScalarValue>();
 
         #region IDictionary Members
 

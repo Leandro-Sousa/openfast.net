@@ -64,11 +64,11 @@ namespace OpenFAST
 
         #region IFieldValue Members
 
-        public virtual IFieldValue Clone()
+        public virtual IFieldValue Copy()
         {
             var copies = new IFieldValue[_values.Length];
             for (int i = 0; i < copies.Length; i++)
-                copies[i] = _values[i].Clone();
+                copies[i] = _values[i].Copy();
             return new GroupValue(_group, copies);
         }
 
@@ -88,12 +88,12 @@ namespace OpenFAST
                 Scalar scalar;
                 if (_group.TryGetIntrospectiveField(fieldName, out scalar))
                 {
-                    if (scalar.FastType.Equals(FastType.Unicode) ||
-                        scalar.FastType.Equals(FastType.String) ||
-                        scalar.FastType.Equals(FastType.Ascii))
+                    if (scalar.FASTType.Equals(FastType.Unicode) ||
+                        scalar.FASTType.Equals(FastType.String) ||
+                        scalar.FASTType.Equals(FastType.Ascii))
                         return GetString(scalar.Name).Length;
 
-                    if (scalar.FastType.Equals(FastType.ByteVector))
+                    if (scalar.FASTType.Equals(FastType.ByteVector))
                         return GetBytes(scalar.Name).Length;
                 }
             }

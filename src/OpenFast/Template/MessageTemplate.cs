@@ -29,41 +29,15 @@ namespace OpenFAST.Template
 {
     public sealed class MessageTemplate : Group, IFieldSet, IEquatable<MessageTemplate>
     {
-        public MessageTemplate(QName name, string childNamespace, Field[] fields)
-            : base(name, childNamespace, CloneAndAddTemplateIdField(fields), false)
+        public MessageTemplate(QName name, Field[] fields) : base(name, AddTemplateIdField(fields), false)
         {
-            foreach (Field f in FieldDefinitions)
-                f.AttachToTemplate(this);
+            UpdateTemplateReference(Fields);
+            Fields[0].MessageTemplate = this;
         }
 
-        public MessageTemplate(QName name, Field[] fields)
-            : this(name, "", fields)
+        public MessageTemplate(string name, Field[] fields) : this(new QName(name), fields)
         {
         }
-
-        public MessageTemplate(string name, Field[] fields)
-            : this(new QName(name), "", fields)
-        {
-        }
-
-        public MessageTemplate(string name, string childNamespace, Field[] fields)
-            : this(new QName(name), childNamespace, fields)
-        {
-        }
-
-        #region Cloning
-
-        public MessageTemplate(MessageTemplate other)
-            : base(other)
-        {
-        }
-
-        public override Field Clone()
-        {
-            return new MessageTemplate(this);
-        }
-
-        #endregion
 
         public new static Type ValueType
         {
@@ -80,11 +54,6 @@ namespace OpenFAST.Template
             }
         }
 
-        protected override bool UsesPresenceMap
-        {
-            get { return true; }
-        }
-
         #region IFieldSet Members
 
         public Field GetField(int index)
@@ -94,13 +63,24 @@ namespace OpenFAST.Template
 
         #endregion
 
-        /// <summary> Clone fields and prepend templateId field </summary>
-        private static Field[] CloneAndAddTemplateIdField(Field[] fields)
+        private void UpdateTemplateReference(Field[] fields)
+        {
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fields[i].MessageTemplate = this;
+            }
+        }
+
+        protected override bool UsesPresenceMap
+        {
+            get { return true; }
+        }
+
+        private static Field[] AddTemplateIdField(Field[] fields)
         {
             var newFields = new Field[fields.Length + 1];
             newFields[0] = new Scalar("templateId", FastType.U32, Operator.Copy, ScalarValue.Undefined, false);
-            for (int i = 0; i < fields.Length; i++)
-                newFields[i + 1] = fields[i].Clone();
+            Array.Copy(fields, 0, newFields, 1, fields.Length);
             return newFields;
         }
 

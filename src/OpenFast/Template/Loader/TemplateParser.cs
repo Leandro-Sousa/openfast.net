@@ -43,7 +43,7 @@ namespace OpenFAST.Template.Loader
                 try
                 {
                     int templateId = Int32.Parse(templateElement.GetAttribute("id"));
-                    context.TemplateRegistry.Add(templateId, messageTemplate);
+                    context.TemplateRegistry.Register(templateId, messageTemplate);
                 }
                 catch (FormatException)
                 {
