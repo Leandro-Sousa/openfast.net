@@ -213,6 +213,10 @@ namespace OpenFAST.Sessions
                                     {
                                         _listening = false;
                                     }
+                                    else if (e is FastSocketClosedException)
+                                    {
+                                        _listening = false;
+                                    }
                                     else if (e is DynErrorException)
                                     {
                                         var fastException = ((DynErrorException) e);
@@ -224,6 +228,8 @@ namespace OpenFAST.Sessions
                                     }
                                 }
                             }
+                            Close(DynError.Close);//if no longer listening make sure everything is closed
+
                         }) {Name = "FAST Session Message Reader"};
             }
 

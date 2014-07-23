@@ -19,6 +19,8 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenFAST.Codec;
@@ -81,6 +83,10 @@ namespace OpenFAST
             catch (IOException e)
             {
                 throw new RuntimeException(e);
+            }
+            catch (ObjectDisposedException e)
+            {
+
             }
         }
 

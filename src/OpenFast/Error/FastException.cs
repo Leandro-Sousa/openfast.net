@@ -29,6 +29,12 @@ namespace OpenFAST.Error
         {
         }
 
+        public FastException(Exception inner)
+            :this(false, inner, null, null)
+        {
+            
+        }
+
         public FastException(string format)
             : this(false, null, format, null)
         {

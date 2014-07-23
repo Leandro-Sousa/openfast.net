@@ -124,6 +124,7 @@
     <Compile Include="Debug\ITrace.cs" />
     <Compile Include="DecimalValue.cs" />
     <Compile Include="Error\FastException.cs" />
+    <Compile Include="Error\FastSocketClosedException.cs" />
     <Compile Include="Error\RepErrorException.cs" />
     <Compile Include="Error\StatErrorException.cs" />
     <Compile Include="IDictionary.cs" />
