@@ -1,3 +1,5 @@
+using OpenFAST.Template;
+using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,8 +24,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 using System;
 using System.Collections.Generic;
 using System.Text;
-using OpenFAST.Template;
-using OpenFAST.Utility;
 
 namespace OpenFAST
 {

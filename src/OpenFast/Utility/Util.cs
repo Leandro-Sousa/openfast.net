@@ -1,3 +1,6 @@
+using OpenFAST.Template;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,9 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using OpenFAST.Template;
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types;
 
 namespace OpenFAST.Utility
 {

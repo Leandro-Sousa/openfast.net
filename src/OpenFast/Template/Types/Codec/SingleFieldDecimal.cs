@@ -1,3 +1,4 @@
+using OpenFAST.Error;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -21,7 +22,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.IO;
-using OpenFAST.Error;
 
 namespace OpenFAST.Template.Types.Codec
 {

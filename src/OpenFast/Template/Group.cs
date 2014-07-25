@@ -1,3 +1,6 @@
+using OpenFAST.Error;
+using OpenFAST.Template.Types.Codec;
+using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,9 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenFAST.Error;
-using OpenFAST.Template.Types.Codec;
-using OpenFAST.Utility;
 
 namespace OpenFAST.Template
 {

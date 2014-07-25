@@ -1,3 +1,5 @@
+using OpenFAST.Error;
+using OpenFAST.Template.Types.Codec;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -20,9 +22,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System;
-using JetBrains.Annotations;
-using OpenFAST.Error;
-using OpenFAST.Template.Types.Codec;
 
 namespace OpenFAST.Template.Types
 {

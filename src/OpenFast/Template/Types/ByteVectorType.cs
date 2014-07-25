@@ -1,3 +1,4 @@
+using OpenFAST.Template.Types.Codec;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -19,9 +20,7 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-using System;
 using System.Text;
-using OpenFAST.Template.Types.Codec;
 
 namespace OpenFAST.Template.Types
 {

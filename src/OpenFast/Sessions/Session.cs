@@ -1,3 +1,5 @@
+using OpenFAST.Error;
+using OpenFAST.Template;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,8 +25,6 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using OpenFAST.Error;
-using OpenFAST.Template;
 
 namespace OpenFAST.Sessions
 {

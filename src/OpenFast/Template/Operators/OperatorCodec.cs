@@ -1,3 +1,5 @@
+using OpenFAST.Error;
+using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -21,9 +23,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.Collections.Generic;
-using OpenFAST.Error;
-using OpenFAST.Template.Types;
-using OpenFAST.Utility;
 
 namespace OpenFAST.Template.Operators
 {

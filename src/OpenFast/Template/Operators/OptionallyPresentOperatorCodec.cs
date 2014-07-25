@@ -1,3 +1,5 @@
+using OpenFAST.Error;
+using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -19,10 +21,7 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-using System;
 using System.Collections.Generic;
-using OpenFAST.Error;
-using OpenFAST.Template.Types;
 
 namespace OpenFAST.Template.Operators
 {

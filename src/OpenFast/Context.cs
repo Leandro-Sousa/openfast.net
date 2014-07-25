@@ -1,3 +1,6 @@
+using OpenFAST.Debug;
+using OpenFAST.Error;
+using OpenFAST.Template;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -20,9 +23,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System.Collections.Generic;
-using OpenFAST.Debug;
-using OpenFAST.Error;
-using OpenFAST.Template;
 
 namespace OpenFAST
 {

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Runtime.Serialization;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace OpenFAST.Error
 {

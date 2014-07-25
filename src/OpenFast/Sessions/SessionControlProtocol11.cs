@@ -1,3 +1,9 @@
+using OpenFAST.Codec;
+using OpenFAST.Error;
+using OpenFAST.Sessions.Template.Exchange;
+using OpenFAST.Template;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,12 +28,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using OpenFAST.Codec;
-using OpenFAST.Error;
-using OpenFAST.Sessions.Template.Exchange;
-using OpenFAST.Template;
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types;
 
 namespace OpenFAST.Sessions
 {

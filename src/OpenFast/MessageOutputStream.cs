@@ -20,12 +20,12 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using OpenFAST.Codec;
 using OpenFAST.Error;
 using OpenFAST.Template;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace OpenFAST
 {
