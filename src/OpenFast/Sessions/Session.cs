@@ -154,6 +154,7 @@ namespace OpenFAST.Sessions
             _inStream.Close();
             _outStream.Close();
             _connection.Close();
+            _sessionListener.OnClose();
         }
 
         // RESPONDER
