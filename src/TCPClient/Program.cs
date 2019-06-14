@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace OpenFAST.TCPClient
@@ -13,16 +14,22 @@ namespace OpenFAST.TCPClient
                 var client = new FastClient("127.0.0.1", 16121);
                 client.Connect();
                 Thread.Sleep(1000);
-                while (true)
+                Stopwatch sw = new Stopwatch();
+                while (!FastClient.Closed)
                 {
-                    DateTime startTime = DateTime.Now;
+                    sw.Start();
                     for (int i = 0; i < 64000; i++)
                     {
+                        if (FastClient.Closed)
+                            break;
                         client.SendMessage("GOOG");
                     }
-                    double seconds = (DateTime.Now - startTime).TotalSeconds;
-                    Console.WriteLine(seconds);
-                    Console.WriteLine("MSG/S:" + (64000/seconds).ToString("0"));
+                    sw.Stop();
+                    if (!FastClient.Closed)
+                    {
+                        Console.WriteLine(sw.Elapsed.TotalSeconds);
+                        Console.WriteLine("MSG/S:" + (64000 / sw.Elapsed.TotalSeconds).ToString("0"));
+                    }
                 }
             }
             catch (Exception ex)

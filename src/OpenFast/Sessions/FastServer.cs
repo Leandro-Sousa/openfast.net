@@ -1,4 +1,3 @@
-using OpenFAST.Error;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,6 +21,7 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.Threading;
+using OpenFAST.Error;
 
 namespace OpenFAST.Sessions
 {
@@ -31,17 +31,15 @@ namespace OpenFAST.Sessions
         private readonly string _serverName;
         private readonly ISessionProtocol _sessionProtocol;
         private IErrorHandler _errorHandler = ErrorHandlerFields.Default;
-        private bool _listening;
+        private volatile bool _listening;
         private Thread _serverThread;
         private ISessionHandler _sessionHandler = SessionHandlerFields.Null;
+        private Session _session;
 
         public FastServer(string serverName, ISessionProtocol sessionProtocol, IEndpoint endpoint)
         {
-            if (sessionProtocol == null) throw new ArgumentNullException("sessionProtocol");
-            if (endpoint == null) throw new ArgumentNullException("endpoint");
-
-            _endpoint = endpoint;
-            _sessionProtocol = sessionProtocol;
+            _endpoint = endpoint ?? throw new ArgumentNullException("endpoint");
+            _sessionProtocol = sessionProtocol ?? throw new ArgumentNullException("sessionProtocol");
             _serverName = serverName;
             endpoint.ConnectionListener = this;
         }
@@ -51,8 +49,7 @@ namespace OpenFAST.Sessions
             // ************* OPTIONAL DEPENDENCY SETTERS **************
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
-                _errorHandler = value;
+                _errorHandler = value ?? throw new ArgumentNullException("value");
             }
         }
 
@@ -81,27 +78,33 @@ namespace OpenFAST.Sessions
                                 }
                                 try
                                 {
-                                    Thread.Sleep(new TimeSpan((Int64) 10000*20));
+                                    Thread.Sleep(20);
                                 }
                                 catch (ThreadInterruptedException)
                                 {
                                 }
                             }
-                        }) {Name = "FastServer"};
+                        })
+                { Name = "FastServer" };
             }
             _serverThread.Start();
         }
 
         public void Close()
         {
+            if (!_listening)
+                return;
+
             _listening = false;
+            if (_session != null)
+                _session.IsListening = false;
             _endpoint.Close();
         }
 
         public override void OnConnect(IConnection connection)
         {
-            Session session = _sessionProtocol.OnNewConnection(_serverName, connection);
-            _sessionHandler.NewSession(session);
+            _session = _sessionProtocol.OnNewConnection(_serverName, connection);
+            _sessionHandler.NewSession(_session);
         }
     }
 }

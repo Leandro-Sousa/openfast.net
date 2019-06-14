@@ -8,20 +8,17 @@ namespace OpenFAST.TCPServer
     public class FastServer
     {
         private readonly ISessionProtocol _scpSessionProtocol = SessionConstants.Scp11;
-        private readonly SessionHandler _sessionHandler;
+        private static Sessions.FastServer _FastServer;
 
         public FastServer()
         {
             var endpoint = new TcpEndpoint(16121);
 
-            _sessionHandler = new SessionHandler();
-
-            var fs = new Sessions.FastServer("test", _scpSessionProtocol, endpoint);
+            _FastServer = new Sessions.FastServer("test", _scpSessionProtocol, endpoint) {SessionHandler = new SessionHandler() };
 
             Global.ErrorHandler = new ServerErrorHandler();
-            fs.SessionHandler = _sessionHandler;
 
-            fs.Listen();
+            _FastServer.Listen();
         }
 
         #region Nested type: ServerErrorHandler
@@ -30,17 +27,29 @@ namespace OpenFAST.TCPServer
         {
             public void OnError(Exception exception, StaticError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _FastServer.Close();
             }
 
             public void OnError(Exception exception, DynError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _FastServer.Close();
             }
 
             public void OnError(Exception exception, RepError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _FastServer.Close();
             }
         }
 

@@ -20,11 +20,11 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 
-using OpenFAST.Codec;
-using OpenFAST.Template;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using OpenFAST.Codec;
+using OpenFAST.Template;
 
 namespace OpenFAST
 {
@@ -49,7 +49,7 @@ namespace OpenFAST
             : this(inputStream, new Context(templateRegistry))
         {
         }
-        
+
         public MessageInputStream(Stream inputStream, Context context)
         {
             _inStream = inputStream;
@@ -84,7 +84,7 @@ namespace OpenFAST
             {
                 throw new RuntimeException(e);
             }
-            catch (ObjectDisposedException e)
+            catch (ObjectDisposedException)
             {
 
             }
@@ -131,8 +131,7 @@ namespace OpenFAST
                 t.HandleMessage(message, _context, _decoder);
             }
 
-            IMessageHandler handler;
-            if (_templateHandlers.TryGetValue(message.Template, out handler))
+            if (_templateHandlers.TryGetValue(message.Template, out IMessageHandler handler))
             {
                 handler.HandleMessage(message, _context, _decoder);
 

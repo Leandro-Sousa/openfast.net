@@ -20,12 +20,12 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 
-using OpenFAST.Codec;
-using OpenFAST.Error;
-using OpenFAST.Template;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using OpenFAST.Codec;
+using OpenFAST.Error;
+using OpenFAST.Template;
 
 namespace OpenFAST
 {
@@ -47,8 +47,8 @@ namespace OpenFAST
 
         public MessageOutputStream(Stream outputStream, ITemplateRegistry templateRegistry)
             : this(outputStream, new Context(templateRegistry))
-        {}
-        
+        { }
+
         public MessageOutputStream(Stream outputStream, Context context)
         {
             _outStream = outputStream;
@@ -78,7 +78,7 @@ namespace OpenFAST
             {
                 Global.ErrorHandler.OnError(e, DynError.IoError, "An error occurred while closing output stream.");
             }
-            catch (ObjectDisposedException e)
+            catch (ObjectDisposedException)
             {
 
             }
@@ -118,8 +118,7 @@ namespace OpenFAST
                     t.HandleMessage(message, _context, _encoder);
                 }
 
-                IMessageHandler handler;
-                if (_templateHandlers.TryGetValue(message.Template, out handler))
+                if (_templateHandlers.TryGetValue(message.Template, out IMessageHandler handler))
                 {
                     handler.HandleMessage(message, _context, _encoder);
                 }
@@ -136,8 +135,11 @@ namespace OpenFAST
             }
             catch (IOException e)
             {
-                Global.ErrorHandler.OnError(e, DynError.IoError, "An IO error occurred while writing message {0}",
-                                            message);
+                Global.ErrorHandler.OnError(e, DynError.IoError, "An IO error occurred while writing message {0}", message);
+            }
+            catch (Exception e)
+            {
+                Global.ErrorHandler.OnError(e, DynError.GeneralError, "An General error occurred while writing message {0}", message);
             }
         }
 

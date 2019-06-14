@@ -9,7 +9,10 @@ namespace OpenFAST.TCPClient
     {
         private readonly Sessions.FastClient _fc;
         private readonly Random _rnd = new Random();
-        private Session _ses;
+        private static Session _ses;
+        
+
+        public static bool Closed { get; private set; }
 
         public FastClient(string host, int port)
         {
@@ -18,9 +21,11 @@ namespace OpenFAST.TCPClient
 
         public void Connect()
         {
-            _ses = _fc.Connect();
-            _ses.ErrorHandler = new ClientErrorHandler();
+            _ses = _fc.Connect();            
             _ses.MessageHandler = new ClientMessageHandler();
+            var eh = new ClientErrorHandler();
+            _ses.ErrorHandler = eh;
+            Global.ErrorHandler = eh;
         }
 
         public void SendMessage(string symbol)
@@ -42,17 +47,32 @@ namespace OpenFAST.TCPClient
 
             public void OnError(Exception exception, StaticError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if(!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _ses.Close();
+                Closed = true;
             }
 
             public void OnError(Exception exception, DynError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _ses.Close();
+                Closed = true;
             }
 
             public void OnError(Exception exception, RepError error, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (!string.IsNullOrEmpty(format))
+                    Console.WriteLine(format, args);
+                else
+                    Console.WriteLine($"{exception?.Message}; {error}");
+                _ses.Close();
+                Closed = true;
             }
 
             #endregion

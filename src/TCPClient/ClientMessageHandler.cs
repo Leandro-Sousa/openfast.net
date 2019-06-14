@@ -10,7 +10,7 @@ namespace OpenFAST.TCPClient
 
         public void OnMessage(Session session, Message message)
         {
-            //Console.WriteLine("RCV TID:" + message.Template.Name);//UNCOMMENT
+//            System.Console.WriteLine(message.ToString());//UNCOMMENT
         }
 
         #endregion
