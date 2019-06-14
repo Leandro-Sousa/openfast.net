@@ -1,8 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types;
-using OpenFAST.Template.Types.Codec;
-using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -26,17 +21,16 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.IO;
+using OpenFAST.Error;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types;
+using OpenFAST.Template.Types.Codec;
+using OpenFAST.Utility;
 
 namespace OpenFAST.Template
 {
     public sealed class Scalar : Field
     {
-        private readonly ScalarValue _defaultValue;
-        private readonly FastType _fastType;
-        private readonly ScalarValue _initialValue;
-        private readonly Operator _operator;
-        private readonly OperatorCodec _operatorCodec;
-        private readonly TypeCodec _typeCodec;
         private string _dictionary;
 
         public Scalar(string name, FastType fastType, Operator op, ScalarValue defaultValue,
@@ -61,13 +55,13 @@ namespace OpenFAST.Template
                        ScalarValue defaultValue, bool optional)
             : base(name, optional)
         {
-            _operator = op;
-            _operatorCodec = operatorCodec;
+            Operator = op;
+            OperatorCodec = operatorCodec;
             _dictionary = DictionaryFields.Global;
-            _defaultValue = defaultValue ?? ScalarValue.Undefined;
-            _fastType = fastType;
-            _typeCodec = fastType.GetCodec(op, optional);
-            _initialValue = (defaultValue == null || defaultValue.IsUndefined) ? _fastType.DefaultValue : defaultValue;
+            DefaultValue = defaultValue ?? ScalarValue.Undefined;
+            FastType = fastType;
+            TypeCodec = fastType.GetCodec(op, optional);
+            BaseValue = (defaultValue == null || defaultValue.IsUndefined) ? FastType.DefaultValue : defaultValue;
             op.Validate(this);
         }
 
@@ -76,12 +70,12 @@ namespace OpenFAST.Template
         public Scalar(Scalar other)
             : base(other)
         {
-            _defaultValue = (ScalarValue) other._defaultValue.Clone();
-            _fastType = other._fastType;
-            _initialValue = (ScalarValue) other._initialValue.Clone();
-            _operator = other._operator;
-            _operatorCodec = other._operatorCodec;
-            _typeCodec = other._typeCodec;
+            DefaultValue = (ScalarValue)other.DefaultValue.Clone();
+            FastType = other.FastType;
+            BaseValue = (ScalarValue)other.BaseValue.Clone();
+            Operator = other.Operator;
+            OperatorCodec = other.OperatorCodec;
+            TypeCodec = other.TypeCodec;
             _dictionary = other._dictionary;
         }
 
@@ -92,15 +86,9 @@ namespace OpenFAST.Template
 
         #endregion
 
-        public FastType FastType
-        {
-            get { return _fastType; }
-        }
+        public FastType FastType { get; }
 
-        public Operator Operator
-        {
-            get { return _operator; }
-        }
+        public Operator Operator { get; }
 
         public string Dictionary
         {
@@ -113,14 +101,11 @@ namespace OpenFAST.Template
             }
         }
 
-        public ScalarValue DefaultValue
-        {
-            get { return _defaultValue; }
-        }
+        public ScalarValue DefaultValue { get; }
 
         public override Type ValueType
         {
-            get { return typeof (ScalarValue); }
+            get { return typeof(ScalarValue); }
         }
 
         public override string TypeName
@@ -128,25 +113,16 @@ namespace OpenFAST.Template
             get { return "scalar"; }
         }
 
-        public ScalarValue BaseValue
-        {
-            get { return _initialValue; }
-        }
+        public ScalarValue BaseValue { get; }
 
-        public TypeCodec TypeCodec
-        {
-            get { return _typeCodec; }
-        }
+        public TypeCodec TypeCodec { get; }
 
         public override bool UsesPresenceMapBit
         {
-            get { return _operatorCodec.UsesPresenceMapBit(IsOptional); }
+            get { return OperatorCodec.UsesPresenceMapBit(IsOptional); }
         }
 
-        public OperatorCodec OperatorCodec
-        {
-            get { return _operatorCodec; }
-        }
+        public OperatorCodec OperatorCodec { get; }
 
         public override byte[] Encode(IFieldValue fieldValue, Group encodeTemplate, Context context,
                                       BitVectorBuilder presenceMapBuilder)
@@ -154,15 +130,15 @@ namespace OpenFAST.Template
             IDictionary dict = context.GetDictionary(Dictionary);
 
             ScalarValue priorValue = context.Lookup(dict, encodeTemplate, Key);
-            var value = (ScalarValue) fieldValue;
-            if (!_operatorCodec.CanEncode(value, this))
+            var value = (ScalarValue)fieldValue;
+            if (!OperatorCodec.CanEncode(value, this))
             {
                 Global.ErrorHandler.OnError(null, DynError.CantEncodeValue,
                                             "The scalar {0} cannot encode the value {1}", this, value);
             }
-            ScalarValue valueToEncode = _operatorCodec.GetValueToEncode(value, priorValue, this,
+            ScalarValue valueToEncode = OperatorCodec.GetValueToEncode(value, priorValue, this,
                                                                         presenceMapBuilder);
-            if (_operator.ShouldStoreValue(value))
+            if (Operator.ShouldStoreValue(value))
             {
                 context.Store(dict, encodeTemplate, Key, value);
             }
@@ -170,7 +146,7 @@ namespace OpenFAST.Template
             {
                 return ByteUtil.EmptyByteArray;
             }
-            byte[] encoding = _typeCodec.Encode(valueToEncode);
+            byte[] encoding = TypeCodec.Encode(valueToEncode);
             if (context.TraceEnabled && encoding.Length > 0)
             {
                 context.EncodeTrace.Field(this, fieldValue, valueToEncode, encoding, presenceMapBuilder.Index);
@@ -180,7 +156,7 @@ namespace OpenFAST.Template
 
         public override bool IsPresenceMapBitSet(byte[] encoding, IFieldValue fieldValue)
         {
-            return _operatorCodec.IsPresenceMapBitSet(encoding, fieldValue);
+            return OperatorCodec.IsPresenceMapBitSet(encoding, fieldValue);
         }
 
         public override IFieldValue Decode(Stream inStream, Group decodeTemplate, Context context,
@@ -199,41 +175,38 @@ namespace OpenFAST.Template
                     if (context.TraceEnabled)
                         inStream = new RecordingInputStream(inStream);
 
-                    if (!_operatorCodec.ShouldDecodeType)
-                        return _operatorCodec.DecodeValue(null, null, this);
+                    if (!OperatorCodec.ShouldDecodeType)
+                        return OperatorCodec.DecodeValue(null, null, this);
 
-                    if (_operatorCodec.DecodeNewValueNeedsPrevious)
+                    if (OperatorCodec.DecodeNewValueNeedsPrevious)
                     {
                         dict = context.GetDictionary(Dictionary);
                         priorValue = context.Lookup(dict, decodeTemplate, key);
-                        ValidateDictionaryTypeAgainstFieldType(priorValue, _fastType);
+                        ValidateDictionaryTypeAgainstFieldType(priorValue, FastType);
                     }
 
-                    ScalarValue decodedValue = _typeCodec.Decode(inStream);
-                    value = _operatorCodec.DecodeValue(decodedValue, priorValue, this);
+                    ScalarValue decodedValue = TypeCodec.Decode(inStream);
+                    value = OperatorCodec.DecodeValue(decodedValue, priorValue, this);
 
                     if (context.TraceEnabled)
                         context.DecodeTrace.Field(this, value, decodedValue,
-                                                  ((RecordingInputStream) inStream).Buffer, pmapIndex);
+                                                  ((RecordingInputStream)inStream).Buffer, pmapIndex);
                 }
                 else
                 {
-                    if (_operatorCodec.DecodeEmptyValueNeedsPrevious)
+                    if (OperatorCodec.DecodeEmptyValueNeedsPrevious)
                     {
                         dict = context.GetDictionary(Dictionary);
                         priorValue = context.Lookup(dict, decodeTemplate, key);
-                        ValidateDictionaryTypeAgainstFieldType(priorValue, _fastType);
+                        ValidateDictionaryTypeAgainstFieldType(priorValue, FastType);
                     }
 
-                    value = _operatorCodec.DecodeEmptyValue(priorValue, this);
+                    value = OperatorCodec.DecodeEmptyValue(priorValue, this);
                 }
 
-                ValidateDecodedValueIsCorrectForType(value, _fastType);
+                ValidateDecodedValueIsCorrectForType(value, FastType);
 
-#warning TODO: Review if this previous "if" statement is needed.
-                // if (Operator != Template.Operator.Operator.DELTA || value != null)
-                if (value != null &&
-                    (_operatorCodec.DecodeNewValueNeedsPrevious || _operatorCodec.DecodeEmptyValueNeedsPrevious))
+                if (OperatorCodec.DecodeNewValueNeedsPrevious || OperatorCodec.DecodeEmptyValueNeedsPrevious)
                 {
                     context.Store(dict ?? context.GetDictionary(Dictionary), decodeTemplate, key, value);
                 }
@@ -266,22 +239,22 @@ namespace OpenFAST.Template
 
         public override string ToString()
         {
-            return string.Format("Scalar [name={0}, operator={1}, type={2}, dictionary={3}]", Name, _operator, _fastType,
+            return string.Format("Scalar [name={0}, operator={1}, type={2}, dictionary={3}]", Name, Operator, FastType,
                                  _dictionary);
         }
 
         public override IFieldValue CreateValue(string value)
         {
-            return _fastType.GetValue(value);
+            return FastType.GetValue(value);
         }
 
         [Obsolete("need?")] // BUG? Do we need this?
         public string Serialize(ScalarValue value)
         {
-            return _fastType.Serialize(value);
+            return FastType.Serialize(value);
         }
 
-        public override bool Equals(Object other)
+        public override bool Equals(object other)
         {
             if (ReferenceEquals(other, this))
                 return true;
@@ -294,11 +267,11 @@ namespace OpenFAST.Template
         internal bool Equals(Scalar other)
         {
             bool equals = EqualsPrivate(Name, other.Name);
-            equals = equals && EqualsPrivate(_fastType, other._fastType);
-            equals = equals && EqualsPrivate(_typeCodec, other._typeCodec);
-            equals = equals && EqualsPrivate(_operator, other._operator);
-            equals = equals && EqualsPrivate(_operatorCodec, other._operatorCodec);
-            equals = equals && EqualsPrivate(_initialValue, other._initialValue);
+            equals = equals && EqualsPrivate(FastType, other.FastType);
+            equals = equals && EqualsPrivate(TypeCodec, other.TypeCodec);
+            equals = equals && EqualsPrivate(Operator, other.Operator);
+            equals = equals && EqualsPrivate(OperatorCodec, other.OperatorCodec);
+            equals = equals && EqualsPrivate(BaseValue, other.BaseValue);
             equals = equals && EqualsPrivate(_dictionary, other._dictionary);
             equals = equals && EqualsPrivate(Id, other.Id);
             return equals;
@@ -317,8 +290,8 @@ namespace OpenFAST.Template
 
         public override int GetHashCode()
         {
-            return QName.GetHashCode() + _fastType.GetHashCode() + _typeCodec.GetHashCode() + _operator.GetHashCode() +
-                   _operatorCodec.GetHashCode() + _initialValue.GetHashCode() + _dictionary.GetHashCode();
+            return QName.GetHashCode() + FastType.GetHashCode() + TypeCodec.GetHashCode() + Operator.GetHashCode() +
+                   OperatorCodec.GetHashCode() + BaseValue.GetHashCode() + _dictionary.GetHashCode();
         }
     }
 }
