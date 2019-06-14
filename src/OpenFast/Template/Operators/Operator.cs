@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,6 +21,8 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.Collections.Generic;
+using OpenFAST.Error;
+using OpenFAST.Template.Types;
 
 namespace OpenFAST.Template.Operators
 {
@@ -38,8 +38,6 @@ namespace OpenFAST.Template.Operators
         public static readonly Operator Delta;
         public static readonly Operator Tail = new Operator("tail");
 
-        private readonly string _name;
-
         static Operator()
         {
             None = new NoneOperator("none");
@@ -51,19 +49,15 @@ namespace OpenFAST.Template.Operators
 
         public Operator(string name)
         {
-            _name = name;
+            Name = name;
             OperatorNameMap[name] = this;
         }
 
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
         public static Operator GetOperator(string name)
         {
-            Operator value;
-            if (OperatorNameMap.TryGetValue(name, out value))
+            if (OperatorNameMap.TryGetValue(name, out Operator value))
                 return value;
 
             throw new ArgumentOutOfRangeException("name", name, "Operator does not exist");
@@ -76,7 +70,7 @@ namespace OpenFAST.Template.Operators
 
         public override string ToString()
         {
-            return _name;
+            return Name;
         }
 
         public virtual bool ShouldStoreValue(ScalarValue value)
@@ -92,22 +86,21 @@ namespace OpenFAST.Template.Operators
         {
             if (ReferenceEquals(other, this))
                 return true;
-            if (ReferenceEquals(other, null))
-                    return false;
-            var t = other as Operator;
-            if (t == null)
+            if (other is null)
                 return false;
-            return t.Equals(_name);
+            if (!(other is Operator t))
+                return false;
+            return t.Equals(Name);
         }
 
         internal bool Equals(Operator other)
         {
-            return _name.Equals(other._name);
+            return Name.Equals(other.Name);
         }
 
         public override int GetHashCode()
         {
-            return _name.GetHashCode();
+            return Name.GetHashCode();
         }
 
         #region Nested type: ConstantOperator

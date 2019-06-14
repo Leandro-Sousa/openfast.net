@@ -206,7 +206,8 @@ namespace OpenFAST.Template
 
                 ValidateDecodedValueIsCorrectForType(value, FastType);
 
-                if (OperatorCodec.DecodeNewValueNeedsPrevious || OperatorCodec.DecodeEmptyValueNeedsPrevious)
+                // Delta the only operator that ALWAYS return true on IsPresent(presenceMapReader) (UsesPresenceMapBit from AlwaysPresentOperatorCodec always return false) and need previous
+                if ((value != null || !(Operator is Operator.DeltaOperator)) && (OperatorCodec.DecodeNewValueNeedsPrevious || OperatorCodec.DecodeEmptyValueNeedsPrevious))
                 {
                     context.Store(dict ?? context.GetDictionary(Dictionary), decodeTemplate, key, value);
                 }
