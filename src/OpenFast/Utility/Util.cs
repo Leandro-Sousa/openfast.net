@@ -1,6 +1,3 @@
-using OpenFAST.Template;
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -26,6 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using OpenFAST.Template;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types;
 
 namespace OpenFAST.Utility
 {
@@ -35,7 +35,7 @@ namespace OpenFAST.Utility
 
         public static bool IsBiggerThanInt(long value)
         {
-            return (value > Int32.MaxValue) || (value < Int32.MinValue);
+            return (value > int.MaxValue) || (value < int.MinValue);
         }
 
         public static ScalarValue GetDifference(byte[] newValue, byte[] priorValue)
@@ -70,12 +70,12 @@ namespace OpenFAST.Utility
 
         public static byte[] ApplyDifference(ScalarValue baseValue, TwinValue diffValue)
         {
-            int subtraction = ((IntegerValue) diffValue.First).Value;
+            int subtraction = ((IntegerValue)diffValue.First).Value;
             byte[] baseVal = baseValue.Bytes;
             byte[] diff = diffValue.Second.Bytes;
             if (subtraction < 0)
             {
-                subtraction = (-1*subtraction) - 1;
+                subtraction = (-1 * subtraction) - 1;
                 return ByteUtil.Combine(diff, 0, diff.Length, baseVal, subtraction, baseVal.Length);
             }
             return ByteUtil.Combine(baseVal, 0, baseVal.Length - subtraction, diff, 0, diff.Length);
@@ -84,7 +84,7 @@ namespace OpenFAST.Utility
         internal static T[] CloneArray<T>(this T[] other)
             where T : Field
         {
-            return other == null ? null : Array.ConvertAll(other, i => (T) i.Clone());
+            return other == null ? null : Array.ConvertAll(other, i => (T)i.Clone());
         }
 
         //public static ScalarValue GetDifference(StringValue newValue, StringValue priorValue)
@@ -157,7 +157,7 @@ namespace OpenFAST.Utility
             foreach (string v in set)
                 str.Append(v).Append(sep);
 
-            str.Length = str.Length - sep.Length;
+            str.Length -= sep.Length;
             str.Append("}");
 
             return str.ToString();
@@ -165,33 +165,33 @@ namespace OpenFAST.Utility
 
         public static int DateToInt(DateTime date)
         {
-            return date.Year*10000 + date.Month*100 + date.Day;
+            return date.Year * 10000 + date.Month * 100 + date.Day;
         }
 
         public static int TimeToInt(DateTime date)
         {
-            return date.Hour*10000000 + date.Minute*100000 + date.Second*1000 + date.Millisecond;
+            return date.Hour * 10000000 + date.Minute * 100000 + date.Second * 1000 + date.Millisecond;
         }
 
         public static int TimestampToInt(DateTime date)
         {
-            return DateToInt(date)*1000000000 + TimeToInt(date);
+            return DateToInt(date) * 1000000000 + TimeToInt(date);
         }
 
         public static DateTime ToTimestamp(long value)
         {
-            var year = (int) (value/10000000000000L);
+            var year = (int)(value / 10000000000000L);
             value %= 10000000000000L;
-            var month = (int) (value/100000000000L);
+            var month = (int)(value / 100000000000L);
             value %= 100000000000L;
-            var day = (int) (value/1000000000);
+            var day = (int)(value / 1000000000);
             value %= 1000000000;
-            var hour = (int) (value/10000000);
+            var hour = (int)(value / 10000000);
             value %= 10000000;
-            var min = (int) (value/100000);
+            var min = (int)(value / 100000);
             value %= 100000;
-            var sec = (int) (value/1000);
-            var ms = (int) (value%1000);
+            var sec = (int)(value / 1000);
+            var ms = (int)(value % 1000);
             return new DateTime(year, month, day, hour, min, sec, ms);
         }
 
@@ -200,7 +200,7 @@ namespace OpenFAST.Utility
         {
             var exponentScalar = new Scalar(Global.CreateImplicitName(name), FastType.I32, exponentOp, exponentVal, optional);
             var mantissaScalar = new Scalar(Global.CreateImplicitName(name), FastType.I64, mantissaOp, mantissaVal, false);
-            return new ComposedScalar(name, FastType.Decimal, new[] {exponentScalar, mantissaScalar}, optional,
+            return new ComposedScalar(name, FastType.Decimal, new[] { exponentScalar, mantissaScalar }, optional,
                                       new DecimalConverter());
         }
 
@@ -246,9 +246,9 @@ namespace OpenFAST.Utility
             for (int i = 0; i < arr1.Length; i++)
             {
                 T v1 = arr1[i];
-                if (ReferenceEquals(v1, null))
+                if (v1 is null)
                 {
-                    if (!ReferenceEquals(arr2[i], null))
+                    if (!(arr2[i] is null))
                         return false;
                 }
                 else
@@ -306,9 +306,9 @@ namespace OpenFAST.Utility
             {
                 T v1 = arr1[i];
 
-                if (ReferenceEquals(v1, null))
+                if (v1 is null)
                 {
-                    if (!ReferenceEquals(arr2[i], null))
+                    if (!(arr2[i] is null))
                         return false;
                 }
                 else
@@ -345,7 +345,7 @@ namespace OpenFAST.Utility
 
             int result = 1;
             for (int i = 0; i < array.Length; i++)
-                result = (result*397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
+                result = (result * 397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
 
             return result;
         }
@@ -358,7 +358,7 @@ namespace OpenFAST.Utility
 
             int result = 1;
             for (int i = 0; i < array.Count; i++)
-                result = (result*397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
+                result = (result * 397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
 
             return result;
         }
@@ -384,7 +384,7 @@ namespace OpenFAST.Utility
             int result = 1;
             int last = offset + count;
             for (int i = offset; i < last; i++)
-                result = (result*397) ^ array[i].GetHashCode();
+                result = (result * 397) ^ array[i].GetHashCode();
 
             return result;
         }
@@ -394,7 +394,7 @@ namespace OpenFAST.Utility
             int val = 0;
             while (Math.Truncate(d) != d)
             {
-                d = d*10;
+                d *= 10;
                 val++;
             }
             return val;
@@ -405,11 +405,11 @@ namespace OpenFAST.Utility
             decimal tr = Math.Truncate(d);
             while (tr != d)
             {
-                d = d*10;
+                d *= 10;
                 tr = Math.Truncate(d);
             }
 
-            return (long) tr;
+            return (long)tr;
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace OpenFAST.Utility
             {
                 if (attributes.Length > 1)
                     throw new ArgumentException(
-                        String.Format("Found {0} (>1) attributes {1} detected for {2}", attributes.Length,
+                        string.Format("Found {0} (>1) attributes {1} detected for {2}", attributes.Length,
                                       typeof(TAttr).Name, customAttrProvider));
                 return (TAttr)attributes[0];
             }

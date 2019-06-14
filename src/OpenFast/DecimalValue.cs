@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,6 +20,8 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System;
+using OpenFAST.Error;
+using OpenFAST.Utility;
 
 namespace OpenFAST
 {
@@ -30,27 +30,8 @@ namespace OpenFAST
         public readonly int Exponent;
         public readonly long Mantissa;
 
-        public DecimalValue(double value)
+        public DecimalValue(double value) : this((decimal)value)
         {
-            if (value == 0.0)
-            {
-                Exponent = 0;
-                Mantissa = 0;
-                return;
-            }
-
-            var decimalValue = (Decimal) value;
-            int exp = Util.BigDecimalScale(decimalValue);
-            long mant = Util.BigDecimalUnScaledValue(decimalValue);
-
-            while (((mant%10) == 0) && (mant != 0))
-            {
-                mant /= 10;
-                exp -= 1;
-            }
-
-            Mantissa = mant;
-            Exponent = - exp;
         }
 
         public DecimalValue(long mantissa, int exponent)
@@ -59,10 +40,26 @@ namespace OpenFAST
             Exponent = exponent;
         }
 
-        public DecimalValue(Decimal bigDecimal)
+        public DecimalValue(decimal bigDecimal)
         {
-            Mantissa = Util.BigDecimalUnScaledValue(bigDecimal);
-            Exponent = Util.BigDecimalScale(bigDecimal);
+            if (bigDecimal == 0)
+            {
+                Exponent = 0;
+                Mantissa = 0;
+                return;
+            }
+
+            int exp = Util.BigDecimalScale(bigDecimal);
+            long mant = Util.BigDecimalUnScaledValue(bigDecimal);
+
+            while (((mant % 10) == 0) && (mant != 0))
+            {
+                mant /= 10;
+                exp -= 1;
+            }
+
+            Mantissa = mant;
+            Exponent = -exp;
         }
 
         public override bool IsNull
@@ -72,7 +69,7 @@ namespace OpenFAST
 
         private long Value
         {
-            get { return Mantissa*((long) Math.Pow(10, Exponent)); }
+            get { return Mantissa * ((long)Math.Pow(10, Exponent)); }
         }
 
         public override NumericValue Increment()
@@ -87,12 +84,12 @@ namespace OpenFAST
 
         public override NumericValue Subtract(NumericValue subtrahend)
         {
-            return new DecimalValue(Decimal.Subtract(ToBigDecimal(), subtrahend.ToBigDecimal()));
+            return new DecimalValue(decimal.Subtract(ToBigDecimal(), subtrahend.ToBigDecimal()));
         }
 
         public override NumericValue Add(NumericValue addend)
         {
-            return new DecimalValue(Decimal.Add(ToBigDecimal(), addend.ToBigDecimal()));
+            return new DecimalValue(decimal.Add(ToBigDecimal(), addend.ToBigDecimal()));
         }
 
         [Obsolete("need?")] // BUG? Do we need this?
@@ -118,41 +115,41 @@ namespace OpenFAST
         public override int ToInt()
         {
             long v = Value;
-            if (Exponent < 0 || v > Int32.MaxValue)
+            if (Exponent < 0 || v > int.MaxValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.DecimalCantConvertToInt, "");
             }
-            return (int) v;
+            return (int)v;
         }
 
         public override short ToShort()
         {
             long v = Value;
-            if (Exponent < 0 || v > Int16.MaxValue)
+            if (Exponent < 0 || v > short.MaxValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.DecimalCantConvertToInt, "");
             }
-            return (short) v;
+            return (short)v;
         }
 
         public override byte ToByte()
         {
             long v = Value;
-            if (Exponent < 0 || v > (byte) SByte.MaxValue)
+            if (Exponent < 0 || v > (byte)sbyte.MaxValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.DecimalCantConvertToInt, "");
             }
-            return (byte) v;
+            return (byte)v;
         }
 
         public override double ToDouble()
         {
-            return Mantissa*Math.Pow(10.0, Exponent);
+            return Mantissa * Math.Pow(10.0, Exponent);
         }
 
-        public override Decimal ToBigDecimal()
+        public override decimal ToBigDecimal()
         {
-            return (decimal) (Mantissa/Math.Pow(10, - Exponent));
+            return (decimal)(Mantissa / Math.Pow(10, -Exponent));
         }
 
         public override string ToString()
@@ -164,17 +161,21 @@ namespace OpenFAST
 
         public bool Equals(DecimalValue other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
             return other.Exponent == Exponent && other.Mantissa == Mantissa;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            var t = obj as DecimalValue;
-            if (t == null) return false;
+            if (obj is null)
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (!(obj is DecimalValue t))
+                return false;
             return t.Exponent == Exponent && t.Mantissa == Mantissa;
         }
 
@@ -182,7 +183,7 @@ namespace OpenFAST
         {
             unchecked
             {
-                return (Exponent*397) ^ Mantissa.GetHashCode();
+                return (Exponent * 397) ^ Mantissa.GetHashCode();
             }
         }
 
