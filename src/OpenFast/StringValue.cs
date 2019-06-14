@@ -1,4 +1,3 @@
-using OpenFAST.Error;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,6 +22,7 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 using System;
 using System.Globalization;
 using System.Text;
+using OpenFAST.Error;
 
 namespace OpenFAST
 {
@@ -49,31 +49,30 @@ namespace OpenFAST
         public override byte ToByte()
         {
             int i = ToInt();
-            if (i > SByte.MaxValue || i < SByte.MinValue)
+            if (i > sbyte.MaxValue || i < sbyte.MinValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
                                             "The value '{0}' is too large to fit into a byte.", i);
                 return 0;
             }
-            return (byte) i;
+            return (byte)i;
         }
 
         public override short ToShort()
         {
             int i = ToInt();
-            if (i > Int16.MaxValue || i < Int16.MinValue)
+            if (i > short.MaxValue || i < short.MinValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
                                             "The value '{0}' is too large to fit into a short.", i);
                 return 0;
             }
-            return (short) i;
+            return (short)i;
         }
 
         public override int ToInt()
         {
-            int result;
-            if (Int32.TryParse(_value, out result))
+            if (int.TryParse(_value, out int result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -83,8 +82,7 @@ namespace OpenFAST
 
         public override long ToLong()
         {
-            long result;
-            if (Int64.TryParse(_value, out result))
+            if (long.TryParse(_value, out long result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -94,8 +92,7 @@ namespace OpenFAST
 
         public override double ToDouble()
         {
-            double result;
-            if (Double.TryParse(_value, out result))
+            if (double.TryParse(_value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -103,9 +100,9 @@ namespace OpenFAST
             return 0.0;
         }
 
-        public override Decimal ToBigDecimal()
+        public override decimal ToBigDecimal()
         {
-            return Decimal.Parse(_value, NumberStyles.Any);
+            return decimal.Parse(_value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
         }
 
         public override string ToString()

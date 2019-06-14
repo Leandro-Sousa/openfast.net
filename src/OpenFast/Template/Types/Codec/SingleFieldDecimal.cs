@@ -1,4 +1,3 @@
-using OpenFAST.Error;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -21,7 +20,9 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System;
+using System.Globalization;
 using System.IO;
+using OpenFAST.Error;
 
 namespace OpenFAST.Template.Types.Codec
 {
@@ -40,7 +41,7 @@ namespace OpenFAST.Template.Types.Codec
             }
 
             var buffer = new MemoryStream();
-            var value = (DecimalValue) v;
+            var value = (DecimalValue)v;
 
             try
             {
@@ -65,7 +66,7 @@ namespace OpenFAST.Template.Types.Codec
 
         public override ScalarValue Decode(Stream inStream)
         {
-            int exponent = ((IntegerValue) Integer.Decode(inStream)).Value;
+            int exponent = ((IntegerValue)Integer.Decode(inStream)).Value;
 
             if (Math.Abs(exponent) > 63)
             {
@@ -80,10 +81,10 @@ namespace OpenFAST.Template.Types.Codec
 
         public static ScalarValue FromString(string value)
         {
-            return new DecimalValue(Double.Parse(value));
+            return new DecimalValue(double.Parse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture));
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             return obj != null && obj.GetType() == GetType();
         }

@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template.Types.Codec;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -21,7 +19,10 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-using System;
+
+using System.Globalization;
+using OpenFAST.Error;
+using OpenFAST.Template.Types.Codec;
 
 namespace OpenFAST.Template.Types
 {
@@ -39,8 +40,7 @@ namespace OpenFAST.Template.Types
 
         public override ScalarValue GetVal(string value)
         {
-            double dbl;
-            if (Double.TryParse(value, out dbl))
+            if (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double dbl))
                 return new DecimalValue(dbl);
 
             Global.ErrorHandler.OnError(null, StaticError.InitialValueIncomp,

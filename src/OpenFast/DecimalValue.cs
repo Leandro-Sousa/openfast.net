@@ -154,7 +154,7 @@ namespace OpenFAST
 
         public override string ToString()
         {
-            return ToBigDecimal().ToString();
+            return ToBigDecimal().ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         #region Equals (optimized for empty parent class)

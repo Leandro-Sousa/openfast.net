@@ -139,5 +139,54 @@ namespace OpenFAST.UnitTests
                 Assert.AreEqual(RepError.DecimalCantConvertToInt, e.Error);
             }
         }
+
+        [Test]
+        public void FromDecimalToDecimalTest()
+        {
+            decimal[] testValues = new decimal[] { 100.1M, 0M, -20.3M, 123456789.123456M };
+            foreach (var value in testValues)
+            {
+
+                var val = new OpenFAST.DecimalValue(value);
+                var test = val.ToBigDecimal();
+                Assert.AreEqual(value, test);
+            }
+        }
+        [Test]
+        public void FromDecimalToDoubleTest()
+        {
+            decimal[] testValues = new decimal[] { 100.1M, 0M, -20.3M, 123456789.123456M };
+            foreach (var value in testValues)
+            {
+
+                var val = new OpenFAST.DecimalValue(value);
+                var test = (decimal)Math.Round(val.ToDouble(), 6);
+                Assert.AreEqual(value, test);
+            }
+        }
+        [Test]
+        public void FromDoubleToDecimalTest()
+        {
+            double[] testValues = new double[] { 100.1, 0.0, -20.3, 123456789.123456 };
+            foreach (var value in testValues)
+            {
+
+                var val = new OpenFAST.DecimalValue(value);
+                var test = Math.Round((double)val.ToBigDecimal(), 6);
+                Assert.AreEqual(value, test);
+            }
+        }
+        [Test]
+        public void FromDoubleToDoubleTest()
+        {
+            double[] testValues = new double[] { 100.1, 0.0, -20.3, 123456789.123456 };
+            foreach (var value in testValues)
+            {
+
+                var val = new OpenFAST.DecimalValue(value);
+                var test = Math.Round(val.ToDouble(), 6);
+                Assert.AreEqual(value, test);
+            }
+        }
     }
 }
