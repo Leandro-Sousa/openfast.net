@@ -34,7 +34,7 @@ namespace OpenFAST.UnitTests.XmlBasedTests
     [TestFixture]
     public class XmlTestRunner
     {
-        private const string XmlTestFilesDir = @"../../../Files/Tests";
+        private readonly string _XmlTestFilesDir = Path.Combine(TestContext.CurrentContext.WorkDirectory, @"Tests");
 
         enum Actions
         {
@@ -50,8 +50,7 @@ namespace OpenFAST.UnitTests.XmlBasedTests
             Console.WriteLine("Initializing...");
 
             // throw args.Exception;
-            ValidationEventHandler errorHandler =
-                (sender, args) => Console.WriteLine("Error {0}\n{1}", args.Message, args.Exception);
+            void errorHandler(object sender, ValidationEventArgs args) => Console.WriteLine("Error {0}\n{1}", args.Message, args.Exception);
 
             Type thisType = MethodBase.GetCurrentMethod().DeclaringType;
             Stream schema = thisType.Assembly.GetManifestResourceStream(thisType, "TestSchema.xsd");
@@ -66,7 +65,7 @@ namespace OpenFAST.UnitTests.XmlBasedTests
             settings.ValidationType = ValidationType.None; // ValidationType.Schema;
             settings.ValidationEventHandler += errorHandler;
 
-            foreach (string xmlFile in Directory.GetFiles(XmlTestFilesDir, "*.xml"))
+            foreach (string xmlFile in Directory.GetFiles(_XmlTestFilesDir, "*.xml"))
             {
                 Console.WriteLine("Processing {0}...", xmlFile);
 

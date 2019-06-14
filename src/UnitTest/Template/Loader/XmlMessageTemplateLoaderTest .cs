@@ -76,7 +76,7 @@ namespace OpenFAST.UnitTests.Template.Loader
         public void TestLoadMdIncrementalRefreshTemplate()
         {
             MessageTemplate messageTemplate;
-            using (var stream = File.OpenRead("FPL/mdIncrementalRefreshTemplate.xml"))
+            using (var stream = File.OpenRead(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FPL/mdIncrementalRefreshTemplate.xml")))
                 messageTemplate = new XmlMessageTemplateLoader().Load(stream)[0];
 
             Assert.AreEqual("MDIncrementalRefresh", messageTemplate.TypeReference.Name);

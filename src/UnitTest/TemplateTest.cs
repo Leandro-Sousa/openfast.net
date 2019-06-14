@@ -35,13 +35,14 @@ namespace OpenFAST.UnitTests
         [SetUp]
         protected void SetUp()
         {
+            var dir = TestContext.CurrentContext.WorkDirectory;
             _loader = new XmlMessageTemplateLoader();
 
-            using (FileStream stream = File.OpenRead("components.xml"))
+            using (FileStream stream = File.OpenRead(Path.Combine(dir,"components.xml")))
                 _loader.Load(stream);
-            using (FileStream stream = File.OpenRead("preTrade.xml"))
+            using (FileStream stream = File.OpenRead(Path.Combine(dir, "preTrade.xml")))
                 _loader.Load(stream);
-            using (FileStream stream = File.OpenRead("session.xml"))
+            using (FileStream stream = File.OpenRead(Path.Combine(dir, "session.xml")))
                 _loader.Load(stream);
         }
 
