@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
-     <TargetFrameworks>netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;net462;net47;net48</TargetFrameworks>
+       <TargetFrameworks>netcoreapp2.1;netcoreapp2.2;net462;net47;net48</TargetFrameworks>
        <PackageId>UnitTest</PackageId>
        <Version>1.0.0.0</Version>
-       <Authors>STT</Authors>
+       <Authors>Scholtz</Authors>
        <Product>UnitTest</Product>
        <Description></Description>
        <AssemblyVersion>1.0.0.0</AssemblyVersion>
        <FileVersion>1.0.0.0</FileVersion>
        <OutputType>Library</OutputType>
        <Platforms>AnyCPU</Platforms>
+       <Company>Scholtz And Co</Company>
    </PropertyGroup>
   <ItemGroup>
      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
@@ -26,5 +27,8 @@
    </ItemGroup>
    <ItemGroup>
        <ProjectReference Include="..\OpenFast\OpenFAST.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <Folder Include="Properties\" />
    </ItemGroup>
 </Project>

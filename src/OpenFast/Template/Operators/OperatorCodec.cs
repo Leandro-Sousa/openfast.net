@@ -29,8 +29,8 @@ namespace OpenFAST.Template.Operators
 {
     public abstract class OperatorCodec
     {
-        private static readonly Dictionary<Tuple<Operator, FastType>, OperatorCodec> OperatorMap =
-            new Dictionary<Tuple<Operator, FastType>, OperatorCodec>();
+        private static readonly Dictionary<Utility.Tuple<Operator, FastType>, OperatorCodec> OperatorMap =
+            new Dictionary<Utility.Tuple<Operator, FastType>, OperatorCodec>();
 
         protected internal static readonly OperatorCodec NoneAll =
             new NoneOperatorCodec(Operator.None, FastType.AllTypes());
@@ -66,7 +66,7 @@ namespace OpenFAST.Template.Operators
         {
             _operator = op;
             foreach (FastType t in types)
-                OperatorMap[Tuple.Create(op, t)] = this;
+                OperatorMap[Utility.Tuple.Create(op, t)] = this;
         }
 
         public Operator Operator
@@ -91,7 +91,7 @@ namespace OpenFAST.Template.Operators
 
         public static OperatorCodec GetCodec(Operator op, FastType type)
         {
-            Tuple<Operator, FastType> key = Tuple.Create(op, type);
+            Utility.Tuple<Operator, FastType> key = Utility.Tuple.Create(op, type);
 
             OperatorCodec codec;
             if (OperatorMap.TryGetValue(key, out codec))

@@ -7,26 +7,10 @@ using System.Reflection;
 
 // TODO: Review the values of the assembly attributes
 
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("FAST Protocol Library")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OpenFAST.NET")]
-[assembly: AssemblyCopyright("shariq.muhammad@gmail.com")]
+[assembly: AssemblyCopyright("shariq.muhammad@gmail.com; Ludovit Scholtz <FirstName>@<LastName>.sk")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Revision
-//      Build Number
-//
-// You can specify all the values or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
@@ -54,7 +38,6 @@ using System.Reflection;
 //       documentation for more information on this.
 //
 
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]

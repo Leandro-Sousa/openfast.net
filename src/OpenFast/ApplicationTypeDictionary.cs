@@ -18,6 +18,7 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
+                Ludovit Scholtz <FirstName>@<LastName>.sk
 */
 
 using System;
@@ -26,13 +27,14 @@ using System.Linq;
 using System.Text;
 using OpenFAST.Template;
 using OpenFAST.Utility;
+using Tuple = OpenFAST.Utility.Tuple;
 
 namespace OpenFAST
 {
     public sealed class ApplicationTypeDictionary : IDictionary
     {
-        private readonly Dictionary<Tuple<QName, QName>, ScalarValue> _dictionary =
-            new Dictionary<Tuple<QName, QName>, ScalarValue>();
+        private readonly Dictionary<Utility.Tuple<QName, QName>, ScalarValue> _dictionary =
+            new Dictionary<Utility.Tuple<QName, QName>, ScalarValue>();
 
         #region IDictionary Members
 

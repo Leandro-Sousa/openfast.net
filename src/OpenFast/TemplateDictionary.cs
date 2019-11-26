@@ -31,15 +31,15 @@ namespace OpenFAST
 {
     public sealed class TemplateDictionary : IDictionary
     {
-        private readonly Dictionary<Tuple<Group, QName>, ScalarValue> _dictionary =
-            new Dictionary<Tuple<Group, QName>, ScalarValue>();
+        private readonly Dictionary<Utility.Tuple<Group, QName>, ScalarValue> _dictionary =
+            new Dictionary<Utility.Tuple<Group, QName>, ScalarValue>();
 
         #region IDictionary Members
 
         public ScalarValue Lookup(Group template, QName key, QName applicationType)
         {
             ScalarValue value;
-            if (_dictionary.TryGetValue(Tuple.Create(template, key), out value))
+            if (_dictionary.TryGetValue(Utility.Tuple.Create(template, key), out value))
                 return value;
 
             return ScalarValue.Undefined;
@@ -52,7 +52,7 @@ namespace OpenFAST
 
         public void Store(Group template, QName key, QName applicationType, ScalarValue value)
         {
-            _dictionary[Tuple.Create(template, key)] = value;
+            _dictionary[Utility.Tuple.Create(template, key)] = value;
         }
 
         #endregion
