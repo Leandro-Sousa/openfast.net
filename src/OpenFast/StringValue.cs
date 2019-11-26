@@ -49,30 +49,31 @@ namespace OpenFAST
         public override byte ToByte()
         {
             int i = ToInt();
-            if (i > sbyte.MaxValue || i < sbyte.MinValue)
+            if (i > SByte.MaxValue || i < SByte.MinValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
                                             "The value '{0}' is too large to fit into a byte.", i);
                 return 0;
             }
-            return (byte)i;
+            return (byte) i;
         }
 
         public override short ToShort()
         {
             int i = ToInt();
-            if (i > short.MaxValue || i < short.MinValue)
+            if (i > Int16.MaxValue || i < Int16.MinValue)
             {
                 Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
                                             "The value '{0}' is too large to fit into a short.", i);
                 return 0;
             }
-            return (short)i;
+            return (short) i;
         }
 
         public override int ToInt()
         {
-            if (int.TryParse(_value, out int result))
+            int result;
+            if (Int32.TryParse(_value, out result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -82,7 +83,8 @@ namespace OpenFAST
 
         public override long ToLong()
         {
-            if (long.TryParse(_value, out long result))
+            long result;
+            if (Int64.TryParse(_value, out result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -92,7 +94,8 @@ namespace OpenFAST
 
         public override double ToDouble()
         {
-            if (double.TryParse(_value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double result))
+            double result;
+            if (Double.TryParse(_value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
                 return result;
 
             Global.ErrorHandler.OnError(null, RepError.NumericValueTooLarge,
@@ -100,9 +103,9 @@ namespace OpenFAST
             return 0.0;
         }
 
-        public override decimal ToBigDecimal()
+        public override Decimal ToBigDecimal()
         {
-            return decimal.Parse(_value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
+            return Decimal.Parse(_value, NumberStyles.Any, CultureInfo.InvariantCulture);
         }
 
         public override string ToString()

@@ -35,14 +35,25 @@ namespace OpenFAST.UnitTests
         [SetUp]
         protected void SetUp()
         {
-            var dir = TestContext.CurrentContext.WorkDirectory;
             _loader = new XmlMessageTemplateLoader();
 
-            using (FileStream stream = File.OpenRead(Path.Combine(dir,"components.xml")))
+            if (!Directory.Exists("Files"))
+            {
+                if (Directory.Exists("../../../../Files"))
+                {
+                    Utility.Util.DirectoryCopy("../../../../Files", "Files", true);
+                }
+                else
+                {
+                    Utility.Util.DirectoryCopy("c:/Documents/bitbucket/libs/openfast.net/src/Files", "Files", true);
+                }
+            }
+
+            using (FileStream stream = File.OpenRead("Files/components.xml"))
                 _loader.Load(stream);
-            using (FileStream stream = File.OpenRead(Path.Combine(dir, "preTrade.xml")))
+            using (FileStream stream = File.OpenRead("Files/preTrade.xml"))
                 _loader.Load(stream);
-            using (FileStream stream = File.OpenRead(Path.Combine(dir, "session.xml")))
+            using (FileStream stream = File.OpenRead("Files/session.xml"))
                 _loader.Load(stream);
         }
 

@@ -1,4 +1,3 @@
-using OpenFAST.Template;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -24,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using OpenFAST.Template;
 
 namespace OpenFAST.Debug
 {

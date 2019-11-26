@@ -34,8 +34,7 @@ namespace OpenFAST.Sessions
         private readonly ISessionProtocol _protocol;
         private IErrorHandler _errorHandler = ErrorHandlerFields.Default;
         private MessageInputStream _inStream;
-        private volatile bool _listening;
-        private volatile bool _closed;
+        private bool _listening;
         private Thread _listeningThread;
         private IMessageListener _messageListener;
         private MessageOutputStream _outStream;
@@ -150,26 +149,17 @@ namespace OpenFAST.Sessions
 
         public void Close()
         {
-            if (_closed)
-                return;
-
             _listening = false;
-            _closed = true;
             _outStream.WriteMessage(_protocol.CloseMessage);
             _inStream.Close();
             _outStream.Close();
             _connection.Close();
-            _sessionListener.OnClose();
         }
 
         // RESPONDER
         public void Close(DynError error)
         {
-            if (_closed)
-                return;
-
             _listening = false;
-            _closed = true;
             _inStream.Close();
             _outStream.Close();
             _sessionListener.OnClose();
@@ -218,18 +208,14 @@ namespace OpenFAST.Sessions
                                 {
                                     Exception cause = e.InnerException;
 
-                                    if (cause != null && cause.GetType().Equals(typeof(SocketException)) &&
+                                    if (cause != null && cause.GetType().Equals(typeof (SocketException)) &&
                                         cause.Message.Equals("Socket closed"))
-                                    {
-                                        _listening = false;
-                                    }
-                                    else if (e is FastSocketClosedException)
                                     {
                                         _listening = false;
                                     }
                                     else if (e is DynErrorException)
                                     {
-                                        var fastException = ((DynErrorException)e);
+                                        var fastException = ((DynErrorException) e);
                                         _errorHandler.OnError(e, fastException.Error, fastException.Message);
                                     }
                                     else
@@ -238,10 +224,7 @@ namespace OpenFAST.Sessions
                                     }
                                 }
                             }
-                            Close(DynError.Close);//if no longer listening make sure everything is closed
-
-                        })
-                { Name = "FAST Session Message Reader" };
+                        }) {Name = "FAST Session Message Reader"};
             }
 
             if (_listeningThread.IsAlive)

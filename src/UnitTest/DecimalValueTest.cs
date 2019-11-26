@@ -33,11 +33,25 @@ namespace OpenFAST.UnitTests
         public void TestMantissaAndExponent()
         {
             var value = new DecimalValue(9427.55);
-            AssertEquals(942755, value.Mantissa);
+            var ret = value.Mantissa.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            Assert.AreEqual("942755", ret);
             AssertEquals(-2, value.Exponent);
 
             value = new DecimalValue(942755, -2);
             AssertEquals(((decimal) 9427.55), value.ToBigDecimal());
+        }
+        [Test]
+        public void TestDecimalConstructors()
+        {
+            var dec1 = new DecimalValue(1.2M);
+            var dec2 = new DecimalValue(1.2D);
+            var dec3 = new DecimalValue(12, -1);
+            var dec4 = new DecimalValue(10000000000.00000000001M);
+
+            Assert.AreEqual(1.2M, dec1.ToBigDecimal());
+            Assert.AreEqual(1.2M, dec2.ToBigDecimal());
+            Assert.AreEqual(1.2M, dec3.ToBigDecimal());
+            Assert.AreEqual(10000000000.00000000001M, dec4.ToBigDecimal());
         }
 
         [Test]
@@ -137,55 +151,6 @@ namespace OpenFAST.UnitTests
             catch (RepErrorException e)
             {
                 Assert.AreEqual(RepError.DecimalCantConvertToInt, e.Error);
-            }
-        }
-
-        [Test]
-        public void FromDecimalToDecimalTest()
-        {
-            decimal[] testValues = new decimal[] { 100.1M, 0M, -20.3M, 123456789.123456M };
-            foreach (var value in testValues)
-            {
-
-                var val = new OpenFAST.DecimalValue(value);
-                var test = val.ToBigDecimal();
-                Assert.AreEqual(value, test);
-            }
-        }
-        [Test]
-        public void FromDecimalToDoubleTest()
-        {
-            decimal[] testValues = new decimal[] { 100.1M, 0M, -20.3M, 123456789.123456M };
-            foreach (var value in testValues)
-            {
-
-                var val = new OpenFAST.DecimalValue(value);
-                var test = (decimal)Math.Round(val.ToDouble(), 6);
-                Assert.AreEqual(value, test);
-            }
-        }
-        [Test]
-        public void FromDoubleToDecimalTest()
-        {
-            double[] testValues = new double[] { 100.1, 0.0, -20.3, 123456789.123456 };
-            foreach (var value in testValues)
-            {
-
-                var val = new OpenFAST.DecimalValue(value);
-                var test = Math.Round((double)val.ToBigDecimal(), 6);
-                Assert.AreEqual(value, test);
-            }
-        }
-        [Test]
-        public void FromDoubleToDoubleTest()
-        {
-            double[] testValues = new double[] { 100.1, 0.0, -20.3, 123456789.123456 };
-            foreach (var value in testValues)
-            {
-
-                var val = new OpenFAST.DecimalValue(value);
-                var test = Math.Round(val.ToDouble(), 6);
-                Assert.AreEqual(value, test);
             }
         }
     }

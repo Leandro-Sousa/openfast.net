@@ -42,16 +42,16 @@ namespace OpenFAST.UnitTests.Template.Operators
             Assert.AreEqual(new decimal(9427.55), value.ToBigDecimal());
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(9427.51), Decimal(9427.55), field);
-            Assert.AreEqual(-4, value.Mantissa);
-            Assert.AreEqual(0, value.Exponent);
+            Assert.AreEqual(-4, (int) value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(9427.46), Decimal(9427.51), field);
-            Assert.AreEqual(-5, value.Mantissa);
-            Assert.AreEqual(0, value.Exponent);
+            Assert.AreEqual(-5, (int)value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(30.6), Decimal(30.6), field);
-            Assert.AreEqual(0, value.Exponent);
-            Assert.AreEqual(0, value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
+            Assert.AreEqual(0, (int)value.Mantissa);
         }
         [Test]
         public void TestGetValueToEncodeForOptional()
@@ -65,17 +65,17 @@ namespace OpenFAST.UnitTests.Template.Operators
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(9427.51),
                     Decimal(9427.55), field);
-            Assert.AreEqual(-4, value.Mantissa);
-            Assert.AreEqual(0, value.Exponent);
+            Assert.AreEqual(-4, (int)value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(9427.46),
                     Decimal(9427.51), field);
-            Assert.AreEqual(-5, value.Mantissa);
-            Assert.AreEqual(0, value.Exponent);
+            Assert.AreEqual(-5, (int)value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
 
             value = (DecimalValue)operatortemp.GetValueToEncode(Decimal(30.6), Decimal(30.6), field);
-            Assert.AreEqual(0, value.Exponent);
-            Assert.AreEqual(0, value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
+            Assert.AreEqual(0, (int)value.Mantissa);
 
             Assert.AreEqual(ScalarValue.Null,
                 operatortemp.GetValueToEncode(null, Decimal(30.6), field));
@@ -88,23 +88,23 @@ namespace OpenFAST.UnitTests.Template.Operators
             var value = (DecimalValue)field.OperatorCodec
                                                      .GetValueToEncode(Decimal(12000),
                     ScalarValue.Undefined, field);
-            Assert.AreEqual(0, value.Mantissa);
-            Assert.AreEqual(0, value.Exponent);
+            Assert.AreEqual(0, (int)value.Mantissa);
+            Assert.AreEqual(0, (int)value.Exponent);
 
             value = (DecimalValue)field.OperatorCodec
                                         .GetValueToEncode(Decimal(12100), Decimal(12000), field);
-            Assert.AreEqual(109, value.Mantissa);
-            Assert.AreEqual(-1, value.Exponent);
+            Assert.AreEqual(109, (int)value.Mantissa);
+            Assert.AreEqual(-1, (int)value.Exponent);
 
             value = (DecimalValue)field.OperatorCodec
                                         .GetValueToEncode(Decimal(12150), Decimal(12100), field);
-            Assert.AreEqual(1094, value.Mantissa);
-            Assert.AreEqual(-1, value.Exponent);
+            Assert.AreEqual(1094, (int)value.Mantissa);
+            Assert.AreEqual(-1, (int)value.Exponent);
 
             value = (DecimalValue)field.OperatorCodec
                                         .GetValueToEncode(Decimal(12200), Decimal(12150), field);
-            Assert.AreEqual(-1093, value.Mantissa);
-            Assert.AreEqual(1, value.Exponent);
+            Assert.AreEqual(-1093, (int)value.Mantissa);
+            Assert.AreEqual(1, (int)value.Exponent);
         }
         [Test]
         public void TestDecodeForMandatoryFieldAndDefaultValue()

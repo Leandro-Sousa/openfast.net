@@ -19,8 +19,6 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-
-using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenFAST.Codec;
@@ -49,7 +47,7 @@ namespace OpenFAST
             : this(inputStream, new Context(templateRegistry))
         {
         }
-
+        
         public MessageInputStream(Stream inputStream, Context context)
         {
             _inStream = inputStream;
@@ -83,10 +81,6 @@ namespace OpenFAST
             catch (IOException e)
             {
                 throw new RuntimeException(e);
-            }
-            catch (ObjectDisposedException)
-            {
-
             }
         }
 
@@ -131,7 +125,8 @@ namespace OpenFAST
                 t.HandleMessage(message, _context, _decoder);
             }
 
-            if (_templateHandlers.TryGetValue(message.Template, out IMessageHandler handler))
+            IMessageHandler handler;
+            if (_templateHandlers.TryGetValue(message.Template, out handler))
             {
                 handler.HandleMessage(message, _context, _decoder);
 

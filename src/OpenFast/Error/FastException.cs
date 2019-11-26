@@ -1,7 +1,7 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace OpenFAST.Error
 {
@@ -27,12 +27,6 @@ namespace OpenFAST.Error
         public FastException()
             : this(false, null, null, null)
         {
-        }
-
-        public FastException(Exception inner)
-            :this(false, inner, null, null)
-        {
-            
         }
 
         public FastException(string format)

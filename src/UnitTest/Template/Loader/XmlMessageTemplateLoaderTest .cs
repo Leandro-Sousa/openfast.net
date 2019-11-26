@@ -75,8 +75,14 @@ namespace OpenFAST.UnitTests.Template.Loader
         [Test]
         public void TestLoadMdIncrementalRefreshTemplate()
         {
+
+            if (!Directory.Exists("Files") && Directory.Exists("../../../../Files"))
+            {
+                Utility.Util.DirectoryCopy("../../../../Files", "Files", true);
+            }
+
             MessageTemplate messageTemplate;
-            using (var stream = File.OpenRead(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FPL/mdIncrementalRefreshTemplate.xml")))
+            using (var stream = File.OpenRead("Files/FPL/mdIncrementalRefreshTemplate.xml"))
                 messageTemplate = new XmlMessageTemplateLoader().Load(stream)[0];
 
             Assert.AreEqual("MDIncrementalRefresh", messageTemplate.TypeReference.Name);

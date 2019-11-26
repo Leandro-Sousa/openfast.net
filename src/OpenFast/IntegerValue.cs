@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,6 +20,8 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System;
+using OpenFAST.Error;
+using OpenFAST.Template;
 
 namespace OpenFAST
 {
@@ -124,7 +124,7 @@ namespace OpenFAST
 
         public override string ToString()
         {
-            return Convert.ToString(_value);
+            return Convert.ToString(_value, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public override byte ToByte()

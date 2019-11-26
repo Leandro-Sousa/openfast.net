@@ -1,5 +1,3 @@
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types.Codec;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,6 +21,8 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.Globalization;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types.Codec;
 
 namespace OpenFAST.Template.Types
 {

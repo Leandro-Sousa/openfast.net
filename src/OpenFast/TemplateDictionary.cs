@@ -1,5 +1,3 @@
-using OpenFAST.Template;
-using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -21,16 +19,20 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenFAST.Template;
+using OpenFAST.Utility;
 
 namespace OpenFAST
 {
     public sealed class TemplateDictionary : IDictionary
     {
-		private readonly Dictionary<OpenFAST.Utility.Tuple<Group, QName>, ScalarValue> _dictionary =
-			new Dictionary<OpenFAST.Utility.Tuple<Group, QName>, ScalarValue>();
+        private readonly Dictionary<Tuple<Group, QName>, ScalarValue> _dictionary =
+            new Dictionary<Tuple<Group, QName>, ScalarValue>();
 
         #region IDictionary Members
 

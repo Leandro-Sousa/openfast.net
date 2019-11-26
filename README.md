@@ -1,22 +1,8 @@
-OpenFAST .NET - port of Java project
-====================================
+# OpenFAST
+A fork/clone of the OpenFAST project
 
-About FAST protocol
--------------------
-http://www.fixprotocol.org/fast
+FAST is an acronym of *F*x *A*dapted for *ST*reaming. The goal of this project is to develop an equivalent library for Microsoft.NET platform similar to original OpenFAST version in Java.
 
-Original OpenFAST project
--------------------------
-https://sourceforge.net/projects/openfast
+This version has extended tests and fixes for decimal usage, encryption and decrtyption of messages.
 
-Roadmap
--------
-Feb 14 - Aug 14: Get this old port up to the latest version of original project.
-
-License
--------
-Mozilla Public License 1.1 (MPL 1.1) as in original project
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/cd541285fc670870fedd8c73a586d4ae "githalytics.com")](http://githalytics.com/devfrenzy/openfast.net)
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/devfrenzy/openfast.net/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+The build is stable for VS 2019 .NET CORE 2.1; .NET CORE 2.2; .NET Framework 4.6.2;.NET Framework 4.7;.NET Framework 4.8

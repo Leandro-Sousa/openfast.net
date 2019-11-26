@@ -32,16 +32,19 @@ namespace OpenFAST.UnitTests.Scenario
         [Test]
         public void TestDeltas()
         {
-            var dir = TestContext.CurrentContext.WorkDirectory;
-
             var templateLoader = new XmlMessageTemplateLoader { LoadTemplateIdFromAuxId = true };
 
-            using (var stream = File.OpenRead(Path.Combine(dir, "CME/templates.xml")))
+            if (!Directory.Exists("Files") && Directory.Exists("../../../../Files"))
+            {
+                Utility.Util.DirectoryCopy("../../../../Files", "Files", true);
+            }
+
+            using (var stream = File.OpenRead("Files/CME/templates.xml"))
             {
                 templateLoader.Load(stream);
             }
 
-            using (var stream = File.OpenRead(Path.Combine(dir, "CME/messages.fast")))
+            using (var stream = File.OpenRead("Files/CME/messages.fast"))
             {
                 var mis = new MessageInputStream(stream, templateLoader.TemplateRegistry);
                 Message md = mis.ReadMessage();

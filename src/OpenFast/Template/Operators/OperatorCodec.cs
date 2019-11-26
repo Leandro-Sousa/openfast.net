@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,13 +21,16 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System;
 using System.Collections.Generic;
+using OpenFAST.Error;
+using OpenFAST.Template.Types;
+using OpenFAST.Utility;
 
 namespace OpenFAST.Template.Operators
 {
     public abstract class OperatorCodec
     {
-		private static readonly Dictionary<OpenFAST.Utility.Tuple<Operator, FastType>, OperatorCodec> OperatorMap =
-			new Dictionary<OpenFAST.Utility.Tuple<Operator, FastType>, OperatorCodec>();
+        private static readonly Dictionary<Tuple<Operator, FastType>, OperatorCodec> OperatorMap =
+            new Dictionary<Tuple<Operator, FastType>, OperatorCodec>();
 
         protected internal static readonly OperatorCodec NoneAll =
             new NoneOperatorCodec(Operator.None, FastType.AllTypes());
@@ -65,7 +66,7 @@ namespace OpenFAST.Template.Operators
         {
             _operator = op;
             foreach (FastType t in types)
-				OperatorMap[OpenFAST.Utility.Tuple.Create(op, t)] = this;
+                OperatorMap[Tuple.Create(op, t)] = this;
         }
 
         public Operator Operator
@@ -90,7 +91,7 @@ namespace OpenFAST.Template.Operators
 
         public static OperatorCodec GetCodec(Operator op, FastType type)
         {
-			OpenFAST.Utility.Tuple<Operator, FastType> key = OpenFAST.Utility.Tuple.Create(op, type);
+            Tuple<Operator, FastType> key = Tuple.Create(op, type);
 
             OperatorCodec codec;
             if (OperatorMap.TryGetValue(key, out codec))

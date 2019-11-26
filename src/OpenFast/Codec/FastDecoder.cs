@@ -1,5 +1,3 @@
-using OpenFAST.Template;
-using OpenFAST.Template.Types.Codec;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -24,6 +22,8 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using OpenFAST.Template;
+using OpenFAST.Template.Types.Codec;
 
 namespace OpenFAST.Codec
 {

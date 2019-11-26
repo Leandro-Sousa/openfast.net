@@ -38,6 +38,8 @@ namespace OpenFAST.Template.Operators
         public static readonly Operator Delta;
         public static readonly Operator Tail = new Operator("tail");
 
+        private readonly string _name;
+
         static Operator()
         {
             None = new NoneOperator("none");
@@ -49,15 +51,19 @@ namespace OpenFAST.Template.Operators
 
         public Operator(string name)
         {
-            Name = name;
+            _name = name;
             OperatorNameMap[name] = this;
         }
 
-        public string Name { get; }
+        public string Name
+        {
+            get { return _name; }
+        }
 
         public static Operator GetOperator(string name)
         {
-            if (OperatorNameMap.TryGetValue(name, out Operator value))
+            Operator value;
+            if (OperatorNameMap.TryGetValue(name, out value))
                 return value;
 
             throw new ArgumentOutOfRangeException("name", name, "Operator does not exist");
@@ -70,7 +76,7 @@ namespace OpenFAST.Template.Operators
 
         public override string ToString()
         {
-            return Name;
+            return _name;
         }
 
         public virtual bool ShouldStoreValue(ScalarValue value)
@@ -86,21 +92,22 @@ namespace OpenFAST.Template.Operators
         {
             if (ReferenceEquals(other, this))
                 return true;
-            if (other is null)
+            if (ReferenceEquals(other, null))
+                    return false;
+            var t = other as Operator;
+            if (t == null)
                 return false;
-            if (!(other is Operator t))
-                return false;
-            return t.Equals(Name);
+            return t.Equals(_name);
         }
 
         internal bool Equals(Operator other)
         {
-            return Name.Equals(other.Name);
+            return _name.Equals(other._name);
         }
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return _name.GetHashCode();
         }
 
         #region Nested type: ConstantOperator

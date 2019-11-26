@@ -36,13 +36,11 @@ namespace OpenFAST.TCPServer
             //send that template
             session.SendTemplates(registry);
 
-            while (session.IsListening)
+            while (true)
             {
                 DateTime startTime = DateTime.Now;
                 for (int i = 0; i < 64000; i++)
                 {
-                    if (!session.IsListening)
-                        break;
                     //make a message
                     var message = new Message(template);
                     message.SetInteger(1, 109);

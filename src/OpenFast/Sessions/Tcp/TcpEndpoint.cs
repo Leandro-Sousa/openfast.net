@@ -84,7 +84,7 @@ namespace OpenFAST.Sessions.Tcp
                     tmp.Start();
                     _serverSocket = tmp;
                 }
-                while (!_closed)
+                while (true)
                 {
                     TcpClient socket = _serverSocket.AcceptTcpClient();
                     _connectionListener.OnConnect(new TcpConnection(socket));

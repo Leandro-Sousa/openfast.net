@@ -25,14 +25,14 @@ namespace OpenFAST.Template
 {
     public sealed class LongValue : NumericValue, IEquatable<LongValue>
     {
-        private readonly long _value;
+        private readonly System.Numerics.BigInteger _value;
 
-        public LongValue(long value)
+        public LongValue(System.Numerics.BigInteger value)
         {
             _value = value;
         }
 
-        public long Value
+        public System.Numerics.BigInteger Value
         {
             get { return _value; }
         }
@@ -107,7 +107,7 @@ namespace OpenFAST.Template
 
         public override long ToLong()
         {
-            return _value;
+            return (long) _value;
         }
 
         public override int ToInt()

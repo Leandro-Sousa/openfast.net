@@ -20,7 +20,6 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System;
-using System.Globalization;
 using System.IO;
 using OpenFAST.Error;
 
@@ -46,7 +45,7 @@ namespace OpenFAST.Template.Types.Codec
             }
 
             var buffer = new MemoryStream();
-            var value = (DecimalValue)v;
+            var value = (DecimalValue) v;
 
             try
             {
@@ -87,10 +86,10 @@ namespace OpenFAST.Template.Types.Codec
 
         public static ScalarValue FromString(string value)
         {
-            return new DecimalValue(double.Parse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture));
+            return new DecimalValue(Double.Parse(value));
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(Object obj)
         {
             return obj != null && obj.GetType() == GetType();
         }

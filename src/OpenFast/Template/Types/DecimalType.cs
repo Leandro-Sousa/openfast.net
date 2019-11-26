@@ -19,8 +19,8 @@ are Copyright (C) Shariq Muhammad. All Rights Reserved.
 Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
-
-using System.Globalization;
+using System;
+using JetBrains.Annotations;
 using OpenFAST.Error;
 using OpenFAST.Template.Types.Codec;
 
@@ -40,7 +40,8 @@ namespace OpenFAST.Template.Types
 
         public override ScalarValue GetVal(string value)
         {
-            if (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double dbl))
+            double dbl;
+            if (Double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture,  out dbl))
                 return new DecimalValue(dbl);
 
             Global.ErrorHandler.OnError(null, StaticError.InitialValueIncomp,

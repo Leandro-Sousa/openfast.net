@@ -35,7 +35,7 @@ namespace OpenFAST.Utility
 
         public static bool IsBiggerThanInt(long value)
         {
-            return (value > int.MaxValue) || (value < int.MinValue);
+            return (value > Int32.MaxValue) || (value < Int32.MinValue);
         }
 
         public static ScalarValue GetDifference(byte[] newValue, byte[] priorValue)
@@ -70,12 +70,12 @@ namespace OpenFAST.Utility
 
         public static byte[] ApplyDifference(ScalarValue baseValue, TwinValue diffValue)
         {
-            int subtraction = ((IntegerValue)diffValue.First).Value;
+            int subtraction = ((IntegerValue) diffValue.First).Value;
             byte[] baseVal = baseValue.Bytes;
             byte[] diff = diffValue.Second.Bytes;
             if (subtraction < 0)
             {
-                subtraction = (-1 * subtraction) - 1;
+                subtraction = (-1*subtraction) - 1;
                 return ByteUtil.Combine(diff, 0, diff.Length, baseVal, subtraction, baseVal.Length);
             }
             return ByteUtil.Combine(baseVal, 0, baseVal.Length - subtraction, diff, 0, diff.Length);
@@ -84,7 +84,7 @@ namespace OpenFAST.Utility
         internal static T[] CloneArray<T>(this T[] other)
             where T : Field
         {
-            return other == null ? null : Array.ConvertAll(other, i => (T)i.Clone());
+            return other == null ? null : Array.ConvertAll(other, i => (T) i.Clone());
         }
 
         //public static ScalarValue GetDifference(StringValue newValue, StringValue priorValue)
@@ -157,7 +157,7 @@ namespace OpenFAST.Utility
             foreach (string v in set)
                 str.Append(v).Append(sep);
 
-            str.Length -= sep.Length;
+            str.Length = str.Length - sep.Length;
             str.Append("}");
 
             return str.ToString();
@@ -165,33 +165,33 @@ namespace OpenFAST.Utility
 
         public static int DateToInt(DateTime date)
         {
-            return date.Year * 10000 + date.Month * 100 + date.Day;
+            return date.Year*10000 + date.Month*100 + date.Day;
         }
 
         public static int TimeToInt(DateTime date)
         {
-            return date.Hour * 10000000 + date.Minute * 100000 + date.Second * 1000 + date.Millisecond;
+            return date.Hour*10000000 + date.Minute*100000 + date.Second*1000 + date.Millisecond;
         }
 
         public static int TimestampToInt(DateTime date)
         {
-            return DateToInt(date) * 1000000000 + TimeToInt(date);
+            return DateToInt(date)*1000000000 + TimeToInt(date);
         }
 
         public static DateTime ToTimestamp(long value)
         {
-            var year = (int)(value / 10000000000000L);
+            var year = (int) (value/10000000000000L);
             value %= 10000000000000L;
-            var month = (int)(value / 100000000000L);
+            var month = (int) (value/100000000000L);
             value %= 100000000000L;
-            var day = (int)(value / 1000000000);
+            var day = (int) (value/1000000000);
             value %= 1000000000;
-            var hour = (int)(value / 10000000);
+            var hour = (int) (value/10000000);
             value %= 10000000;
-            var min = (int)(value / 100000);
+            var min = (int) (value/100000);
             value %= 100000;
-            var sec = (int)(value / 1000);
-            var ms = (int)(value % 1000);
+            var sec = (int) (value/1000);
+            var ms = (int) (value%1000);
             return new DateTime(year, month, day, hour, min, sec, ms);
         }
 
@@ -200,7 +200,7 @@ namespace OpenFAST.Utility
         {
             var exponentScalar = new Scalar(Global.CreateImplicitName(name), FastType.I32, exponentOp, exponentVal, optional);
             var mantissaScalar = new Scalar(Global.CreateImplicitName(name), FastType.I64, mantissaOp, mantissaVal, false);
-            return new ComposedScalar(name, FastType.Decimal, new[] { exponentScalar, mantissaScalar }, optional,
+            return new ComposedScalar(name, FastType.Decimal, new[] {exponentScalar, mantissaScalar}, optional,
                                       new DecimalConverter());
         }
 
@@ -246,9 +246,9 @@ namespace OpenFAST.Utility
             for (int i = 0; i < arr1.Length; i++)
             {
                 T v1 = arr1[i];
-                if (v1 is null)
+                if (ReferenceEquals(v1, null))
                 {
-                    if (!(arr2[i] is null))
+                    if (!ReferenceEquals(arr2[i], null))
                         return false;
                 }
                 else
@@ -306,9 +306,9 @@ namespace OpenFAST.Utility
             {
                 T v1 = arr1[i];
 
-                if (v1 is null)
+                if (ReferenceEquals(v1, null))
                 {
-                    if (!(arr2[i] is null))
+                    if (!ReferenceEquals(arr2[i], null))
                         return false;
                 }
                 else
@@ -345,7 +345,7 @@ namespace OpenFAST.Utility
 
             int result = 1;
             for (int i = 0; i < array.Length; i++)
-                result = (result * 397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
+                result = (result*397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
 
             return result;
         }
@@ -358,7 +358,7 @@ namespace OpenFAST.Utility
 
             int result = 1;
             for (int i = 0; i < array.Count; i++)
-                result = (result * 397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
+                result = (result*397) ^ (array[i] == null ? 0 : array[i].GetHashCode());
 
             return result;
         }
@@ -384,7 +384,7 @@ namespace OpenFAST.Utility
             int result = 1;
             int last = offset + count;
             for (int i = offset; i < last; i++)
-                result = (result * 397) ^ array[i].GetHashCode();
+                result = (result*397) ^ array[i].GetHashCode();
 
             return result;
         }
@@ -394,22 +394,22 @@ namespace OpenFAST.Utility
             int val = 0;
             while (Math.Truncate(d) != d)
             {
-                d *= 10;
+                d = d*10;
                 val++;
             }
             return val;
         }
 
-        public static long BigDecimalUnScaledValue(decimal d)
+        public static System.Numerics.BigInteger BigDecimalUnScaledValue(decimal d)
         {
             decimal tr = Math.Truncate(d);
             while (tr != d)
             {
-                d *= 10;
+                d = d*10;
                 tr = Math.Truncate(d);
             }
-
-            return (long)tr;
+            
+            return new System.Numerics.BigInteger(tr);
         }
 
         /// <summary>
@@ -444,13 +444,56 @@ namespace OpenFAST.Utility
             {
                 if (attributes.Length > 1)
                     throw new ArgumentException(
-                        string.Format("Found {0} (>1) attributes {1} detected for {2}", attributes.Length,
+                        String.Format("Found {0} (>1) attributes {1} detected for {2}", attributes.Length,
                                       typeof(TAttr).Name, customAttrProvider));
                 return (TAttr)attributes[0];
             }
             return null;
         }
+        /// <summary>
+        /// Copy directory
+        /// by https://docs.microsoft.com/cs-cz/dotnet/standard/io/how-to-copy-directories
+        /// </summary>
+        /// <param name="sourceDirName"></param>
+        /// <param name="destDirName"></param>
+        /// <param name="copySubDirs"></param>
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(sourceDirName);
 
+            if (!dir.Exists)
+            {
+                throw new System.IO.DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            System.IO.DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!System.IO.Directory.Exists(destDirName))
+            {
+                System.IO.Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            System.IO.FileInfo[] files = dir.GetFiles();
+            foreach (System.IO.FileInfo file in files)
+            {
+                string temppath = System.IO.Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (System.IO.DirectoryInfo subdir in dirs)
+                {
+                    string temppath = System.IO.Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
+        }
     }
 }
 

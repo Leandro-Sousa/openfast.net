@@ -136,6 +136,147 @@ namespace OpenFAST.UnitTests.Codec
         }
 
         [Test]
+        public void testDecodeMessageWithUnsignedLongFieldTypesAndAllOperators()
+        {
+            var template = new MessageTemplate(
+                "",
+                new Field[]
+                    {
+                        new Scalar("1", FastType.U64, Operator.Copy, ScalarValue.Undefined, false),
+                        new Scalar("2", FastType.U64, Operator.Delta, ScalarValue.Undefined, false),
+                        new Scalar("3", FastType.U64, Operator.Increment, new IntegerValue(10), false),
+                        new Scalar("4", FastType.U64, Operator.Increment, ScalarValue.Undefined, false),
+                        new Scalar("5", FastType.U64, Operator.Constant, new IntegerValue(1), false),
+                        /* NON-TRANSFERRABLE */
+                        new Scalar("6", FastType.U64, Operator.Default, new IntegerValue(2), false)
+                    });
+
+            GroupValue message = new Message(template);
+            message.SetInteger(1, 109);
+            message.SetInteger(2, 29470);
+            message.SetInteger(3, 10);
+            message.SetInteger(4, 3);
+            message.SetInteger(5, 1);
+            message.SetInteger(6, 2);
+
+            //                   --PMAP-- --TID--- --------#1------- ------------#2------------ ---#4---
+            const string msg1 = "11101000 11110001 11101101 00000001 01100110 10011110 10000011";
+
+            //                   --PMAP-- ---#2--- ---#6---
+            const string msg2 = "10000100 11111111 10000011";
+
+            //                   --PMAP-- --------#1------- --------#2------- ---#4--- ---#6---
+            const string msg3 = "10101100 11100000 00001000 10000111 10000001 10000011";
+
+            const string msg4 = "10111100 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101101 01011001 11011100 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101111 01001000 10000000";
+
+            Stream input = ByteUtil.CreateByteStream(msg1 + ' ' + msg2 + ' ' +
+                                                     msg3 + ' ' + msg4);
+            var context = new Context();
+            context.RegisterTemplate(113, template);
+
+            var decoder = new FastDecoder(context, input);
+
+            Message readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+            message.SetInteger(2, 29469);
+            message.SetInteger(3, 11);
+            message.SetInteger(4, 4);
+            message.SetInteger(6, 3);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+            message.SetInteger(1, 96);
+            message.SetInteger(2, 30500);
+            message.SetInteger(3, 12);
+            message.SetInteger(4, 1);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+
+            message.SetLong(1, 10000000000L);
+            message.SetLong(2, 10000000000L);
+            message.SetLong(3, 10000000000L);
+            message.SetLong(4, 10000000000L);
+            message.SetLong(6, 10000000000L);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+        }
+
+        [Test]
+        public void testDecodeMessageWithDecimalFieldTypesAndAllOperators()
+        {
+            var template = new MessageTemplate(
+                "",
+                new Field[]
+                    {
+                        new Scalar("1", FastType.Decimal, Operator.Copy, ScalarValue.Undefined, false),
+                        new Scalar("2", FastType.Decimal, Operator.Delta, ScalarValue.Undefined, false),
+                        new Scalar("3", FastType.Decimal, Operator.Delta, ScalarValue.Undefined, true),
+                        new Scalar("4", FastType.Decimal, Operator.Delta, new DecimalValue(12.3M), false),
+                        new Scalar("5", FastType.Decimal, Operator.Constant, new DecimalValue(23.4M), false),
+                        new Scalar("6", FastType.Decimal, Operator.Default, new DecimalValue(24.5M), false)
+                    });
+
+            GroupValue message;
+
+            string msg1 = "11100000 11110001 11111111 10001100 11111111 10010111 10000000 10000000 01111111 10110010";
+            string msg2 = "10110000 11111000 00001101 01110000 00101101 01010110 00111010 00111011 00010000 00000000 10000001 11111001 00001101 01110000 00101101 01010110 00111010 00111011 00001111 01111111 11101011 11111000 00001101 01110000 00101101 01010110 00111010 00111011 00010000 00000000 10000011 11111001 00001101 01110000 00101101 01010110 00111010 00111011 00001111 01111111 11010111 11111000 00001101 01110000 00101101 01010110 00111010 00111011 00010000 00000000 10000110";
+            string msg3 = "10110000 11111000 00101001 01010001 00001001 00000011 00101111 00110001 00110000 00000000 10000001 10000000 00011011 01100000 01011011 00101100 01110100 01110110 00100000 00000000 10000000 10000000 10000000 00011011 01100000 01011011 00101100 01110100 01110110 00100000 00000000 10000000 11111000 00101001 01010001 00001001 00000011 00101111 00110001 00110000 00000000 10000110";
+            string msg4 = "10100000 10000000 10000000 10001000 01010110 00101110 01110110 01111100 01010000 01001110 01001111 01111111 11111110 10000000 10000111 01010110 00101110 01110110 01111100 01010000 01001110 01010000 00000000 11110111";
+
+            Stream input = ByteUtil.CreateByteStream(msg1 + ' ' + msg2 + ' ' + msg3 + ' ' + msg4);
+
+            var context = new Context();
+            context.RegisterTemplate(113, template);
+
+            var decoder = new FastDecoder(context, input);
+
+            message = new Message(template);
+            message.SetDecimal(1, 1.2M);
+            message.SetDecimal(2, 2.3M);
+            message.SetDecimal(4, 4.5M);
+            message.SetDecimal(5, 23.4M);
+            message.SetDecimal(6, 24.5M);
+
+            Message readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+            message = new Message(template);
+            message.SetDecimal(1, 10000000000.00000001M);
+            message.SetDecimal(2, 10000000000.00000002M);
+            message.SetDecimal(3, 10000000000.00000003M);
+            message.SetDecimal(4, 10000000000.00000004M);
+            message.SetDecimal(6, 10000000000.00000006M);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+            message = new Message(template);
+            message.SetDecimal(1, 30000000000.00000001M);
+            message.SetDecimal(2, 30000000000.00000002M);
+            message.SetDecimal(4, 30000000000.00000004M);
+            message.SetDecimal(6, 30000000000.00000006M);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+            message = new Message(template);
+            message.SetDecimal(1, 0M);
+            message.SetDecimal(2, 0M);
+            message.SetDecimal(4, 12.3M);
+            message.SetDecimal(6, 24.5M);
+
+            readMessage = decoder.ReadMessage();
+            Assert.AreEqual(message, readMessage);
+
+        }
+        [Test]
         public void TestDecodeMessageWithStringFieldTypesAndAllOperators()
         {
             var template = new MessageTemplate(

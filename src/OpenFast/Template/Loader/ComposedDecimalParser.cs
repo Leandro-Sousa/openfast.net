@@ -1,6 +1,3 @@
-using OpenFAST.Template.Operators;
-using OpenFAST.Template.Types;
-using OpenFAST.Utility;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -23,6 +20,9 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
                 Yuri Astrakhan <FirstName><LastName>@gmail.com
 */
 using System.Xml;
+using OpenFAST.Template.Operators;
+using OpenFAST.Template.Types;
+using OpenFAST.Utility;
 
 namespace OpenFAST.Template.Loader
 {

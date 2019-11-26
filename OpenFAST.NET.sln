@@ -1,17 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29001.49
+VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFAST", "src\OpenFast\OpenFAST.csproj", "{B41B3B40-8E14-45EC-BC3A-311BC8C1C20E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenFAST", "src\OpenFast\OpenFAST.csproj", "{B41B3B40-8E14-45EC-BC3A-311BC8C1C20E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "src\UnitTest\UnitTest.csproj", "{05D5E09C-CEF1-4831-BF48-DAA36977100B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "src\UnitTest\UnitTest.csproj", "{05D5E09C-CEF1-4831-BF48-DAA36977100B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPServer", "src\TCPServer\TCPServer.csproj", "{8656599E-A817-43D3-BAFB-CFD997240963}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPServer", "src\TCPServer\TCPServer.csproj", "{8656599E-A817-43D3-BAFB-CFD997240963}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPClient", "src\TCPClient\TCPClient.csproj", "{02E1C7BC-F6ED-405C-9AC2-00217B09C332}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfUnitTest", "src\PerfUnitTest\PerfUnitTest.csproj", "{DE3C32FE-D32D-4938-B4C0-8ECCAFB8173D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPClient", "src\TCPClient\TCPClient.csproj", "{02E1C7BC-F6ED-405C-9AC2-00217B09C332}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,15 +33,11 @@ Global
 		{02E1C7BC-F6ED-405C-9AC2-00217B09C332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02E1C7BC-F6ED-405C-9AC2-00217B09C332}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02E1C7BC-F6ED-405C-9AC2-00217B09C332}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE3C32FE-D32D-4938-B4C0-8ECCAFB8173D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE3C32FE-D32D-4938-B4C0-8ECCAFB8173D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE3C32FE-D32D-4938-B4C0-8ECCAFB8173D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE3C32FE-D32D-4938-B4C0-8ECCAFB8173D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C387BD9D-1AEF-4579-B576-F521B67D7ACD}
+		SolutionGuid = {32E8930E-505F-4669-B066-63070E75F7B0}
 	EndGlobalSection
 EndGlobal

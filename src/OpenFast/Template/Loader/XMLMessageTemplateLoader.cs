@@ -1,5 +1,3 @@
-using OpenFAST.Error;
-using OpenFAST.Template.Types;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -25,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using OpenFAST.Error;
+using OpenFAST.Template.Types;
 
 namespace OpenFAST.Template.Loader
 {

@@ -1,4 +1,3 @@
-using OpenFAST.Error;
 /*
 
 The contents of this file are subject to the Mozilla Public License
@@ -22,6 +21,7 @@ Contributor(s): Shariq Muhammad <shariq.muhammad@gmail.com>
 */
 using System.Collections.Generic;
 using System.Xml;
+using OpenFAST.Error;
 
 namespace OpenFAST.Template.Loader
 {

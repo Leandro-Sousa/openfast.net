@@ -162,6 +162,68 @@ namespace OpenFAST.UnitTests.Codec
             AssertEquals(msg3, encoder.Encode(message));
         }
 
+
+        [Test]
+        public void TestEncodeMessageWithULongFieldTypesAndAllOperators()
+        {
+            var template = new MessageTemplate(
+                "",
+                new Field[]
+                    {
+                        new Scalar("1", FastType.U64, Operator.Copy, ScalarValue.Undefined, false),
+                        new Scalar("2", FastType.U64, Operator.Delta, ScalarValue.Undefined, false),
+                        new Scalar("3", FastType.U64, Operator.Increment, new IntegerValue(10), false),
+                        new Scalar("4", FastType.U64, Operator.Increment, ScalarValue.Undefined, false),
+                        new Scalar("5", FastType.U64, Operator.Constant, new IntegerValue(1), false),
+                        /* NON-TRANSFERRABLE */
+                        new Scalar("6", FastType.U64, Operator.Default, new IntegerValue(2), false)
+                    });
+
+            var context = new Context();
+            context.RegisterTemplate(113, template);
+
+            var encoder = new FastEncoder(context);
+
+            var message = new Message(template);
+            message.SetInteger(1, 109);
+            message.SetInteger(2, 29470);
+            message.SetInteger(3, 10);
+            message.SetInteger(4, 3);
+            message.SetInteger(5, 1);
+            message.SetInteger(6, 2);
+
+            //                   --PMAP-- --TID--- --------#1------- ------------#2------------ ---#4---
+            const string msg1 = "11101000 11110001 11101101 00000001 01100110 10011110 10000011";
+            TestUtil.AssertBitVectorEquals(msg1, encoder.Encode(message));
+
+            message.SetInteger(2, 29469);
+            message.SetInteger(3, 11);
+            message.SetInteger(4, 4);
+            message.SetInteger(6, 3);
+
+            //                  --PMAP-- ---#2--- ---#6---
+            const string msg2 = "10000100 11111111 10000011";
+            TestUtil.AssertBitVectorEquals(msg2, encoder.Encode(message));
+
+            message.SetInteger(1, 96);
+            message.SetInteger(2, 30500);
+            message.SetInteger(3, 12);
+            message.SetInteger(4, 1);
+
+            //                  --PMAP-- --------#1------- --------#2------- ---#4--- ---#6---
+            const string msg3 = "10101100 11100000 00001000 10000111 10000001 10000011";
+            AssertEquals(msg3, encoder.Encode(message));
+
+            message.SetLong(1, 10000000000L);
+            message.SetLong(2, 10000000000L);
+            message.SetLong(3, 10000000000L);
+            message.SetLong(4, 10000000000L);
+            message.SetLong(6, 10000000000L);
+
+            const string msg4 = "10111100 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101101 01011001 11011100 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101111 01001000 10000000 00100101 00100000 00101111 01001000 10000000";
+            AssertEquals(msg4, encoder.Encode(message));
+        }
+
         [Test]
         public void TestEncodeMessageWithStringFieldTypesAndAllOperators()
         {
