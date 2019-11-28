@@ -1,2 +1,7 @@
 language: csharp
 solution: OpenFAST.NET.sln
+
+install:
+  - nuget restore OpenFAST.NET.sln
+script:
+  - xbuild /p:Configuration=Release OpenFAST.NET.sln /p:TargetFrameworkVersion="v4.8"
